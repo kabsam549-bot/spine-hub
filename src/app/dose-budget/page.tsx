@@ -41,7 +41,7 @@ function BEDCalc() {
   return (
     <div className="rounded-xl border border-gray-200 bg-gray-50/50 p-5">
       <h3 className="text-sm font-semibold text-gray-800 mb-3">Quick BED / EQD2 Calculator</h3>
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         <div className="grid gap-1">
           <label className="text-xs font-medium text-gray-500">Total Dose (Gy)</label>
           <input type="number" step="0.1" value={dose} onChange={(e) => setDose(e.target.value)} placeholder="30"
@@ -52,7 +52,7 @@ function BEDCalc() {
           <input type="number" min="1" value={fx} onChange={(e) => setFx(e.target.value)} placeholder="5"
             className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
         </div>
-        <div className="grid gap-1">
+        <div className="grid gap-1 col-span-2 sm:col-span-1">
           <label className="text-xs font-medium text-gray-500">&alpha;/&beta; (Gy)</label>
           <select value={ab} onChange={(e) => setAb(e.target.value)}
             className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
@@ -61,7 +61,7 @@ function BEDCalc() {
         </div>
       </div>
       {result && (
-        <div className="mt-3 flex gap-4 text-sm">
+        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm">
           <span className="text-gray-500">BED: <span className="font-semibold text-gray-800">{result.bed} Gy</span></span>
           <span className="text-gray-500">EQD2: <span className="font-semibold text-gray-800">{result.eqd2} Gy</span></span>
           {dpf && <span className="text-gray-500">Dose/fx: <span className="font-semibold text-gray-800">{dpf} Gy</span></span>}
@@ -232,7 +232,7 @@ export default function DoseBudgetPage() {
             </ol>
             <div className="border-t border-blue-200 pt-3">
               <p className="font-semibold text-xs mb-2">Tissue Recovery Model</p>
-              <div className="grid grid-cols-4 gap-2 text-xs">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
                 <div className="rounded-lg bg-white/60 p-2 text-center">
                   <p className="font-bold text-red-600">&lt;6 mo</p>
                   <p className="text-gray-600">0% recovery</p>
@@ -295,7 +295,7 @@ export default function DoseBudgetPage() {
                             className="text-xs text-red-400 hover:text-red-600">Remove</button>
                         </div>
                       )}
-                      <div className="grid grid-cols-3 gap-3">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <div className="grid gap-1">
                           <label className="text-xs font-medium text-gray-500">
                             {ci === 0 ? "Prior Dose (Gy)" : "Dose (Gy)"}

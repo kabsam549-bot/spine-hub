@@ -254,7 +254,7 @@ export default function NOMSPage() {
             <p className="mt-4 text-sm text-gray-600 leading-relaxed">{recommendation.details}</p>
 
             {/* Selected inputs summary */}
-            <div className="mt-6 pt-4 border-t border-blue-200 grid grid-cols-4 gap-3 text-xs">
+            <div className="mt-6 pt-4 border-t border-blue-200 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
               <div><span className="text-gray-500">ESCC:</span> <span className="font-semibold text-gray-800">{escc?.toUpperCase()}</span></div>
               <div><span className="text-gray-500">Histology:</span> <span className="font-semibold text-gray-800">{radio === "sensitive" ? "Sensitive" : "Resistant"}</span></div>
               <div><span className="text-gray-500">Stability:</span> <span className="font-semibold text-gray-800">{stability?.replace("-", " ")}</span></div>

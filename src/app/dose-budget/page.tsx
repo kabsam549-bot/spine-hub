@@ -267,65 +267,67 @@ export default function DoseBudgetPage() {
               </div>
 
               {selectedOARs.map((item) => (
-                <div key={item.oar.name} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-                  <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-base font-semibold text-gray-900">{item.oar.name}</h3>
-                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${tierLabel[item.oar.tier].color}`}>
-                          {tierLabel[item.oar.tier].label}
+                <div key={item.oar.name} className="rounded-2xl border border-gray-200 bg-white p-4 sm:p-5 shadow-sm">
+                  {/* Header */}
+                  <div className="flex items-start justify-between gap-2 mb-3">
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <h3 className="text-sm sm:text-base font-semibold text-gray-900">{item.oar.name}</h3>
+                        <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold ${tierLabel[item.oar.tier].color}`}>
+                          Tier {item.oar.tier}
                         </span>
                       </div>
-                      <p className="text-xs text-gray-500 mt-1">
-                        Lifetime tolerance: <span className="font-semibold">{item.oar.lifetimeToleranceEQD2} Gy EQD2</span>
-                        {" | "}&alpha;/&beta; = {item.oar.alphaBeta} Gy
-                        {" | "}Risk: {item.oar.complication}
-                      </p>
+                      <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1 text-[11px] text-gray-400">
+                        <span>Tolerance: <span className="font-semibold text-gray-600">{item.oar.lifetimeToleranceEQD2} Gy</span></span>
+                        <span>&alpha;/&beta; = {item.oar.alphaBeta}</span>
+                      </div>
                     </div>
                     <button onClick={() => removeOAR(item.oar.name)}
-                      className="text-gray-400 hover:text-red-500 transition-colors text-lg leading-none">&times;</button>
+                      className="shrink-0 text-gray-300 hover:text-red-500 transition-colors text-lg leading-none p-1">&times;</button>
                   </div>
 
+                  {/* Course inputs */}
                   {item.courses.map((course, ci) => (
-                    <div key={ci} className={`${ci > 0 ? "mt-3 border-l-4 border-amber-200 pl-4" : ""}`}>
+                    <div key={ci} className={`${ci > 0 ? "mt-3 pt-3 border-t border-gray-100" : ""}`}>
                       {ci > 0 && (
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-xs font-medium text-gray-500">Course {ci + 1}</span>
+                          <span className="text-[11px] font-medium text-amber-600">Course {ci + 1}</span>
                           <button onClick={() => removeCourse(item.oar.name, ci)}
-                            className="text-xs text-red-400 hover:text-red-600">Remove</button>
+                            className="text-[11px] text-red-400 hover:text-red-600">Remove</button>
                         </div>
                       )}
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <div className="grid gap-1">
-                          <label className="text-xs font-medium text-gray-500">
-                            {ci === 0 ? "Prior Dose (Gy)" : "Dose (Gy)"}
+                      {/* 3-column inline row -- stays 3-col even on mobile with compact inputs */}
+                      <div className="grid grid-cols-3 gap-2">
+                        <div>
+                          <label className="block text-[11px] font-medium text-gray-400 mb-1">
+                            {ci === 0 ? "Dose" : "Dose"}
                           </label>
                           <div className="relative">
-                            <input type="number" step="0.1" min="0" value={course.dose}
+                            <input type="number" inputMode="decimal" step="0.1" min="0" value={course.dose}
                               onChange={(e) => updateCourse(item.oar.name, ci, "dose", e.target.value)}
-                              className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 pr-10 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                              placeholder="0" />
-                            <span className="absolute right-3 top-2 text-xs text-gray-400">Gy</span>
+                              className="w-full rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-2 pr-8 text-sm text-gray-900 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                              placeholder="Gy" />
+                            <span className="absolute right-2 top-2.5 text-[10px] text-gray-300 pointer-events-none">Gy</span>
                           </div>
                         </div>
-                        <div className="grid gap-1">
-                          <label className="text-xs font-medium text-gray-500">Fractions</label>
+                        <div>
+                          <label className="block text-[11px] font-medium text-gray-400 mb-1">Fractions</label>
                           <div className="relative">
-                            <input type="number" min="1" value={course.fractions}
+                            <input type="number" inputMode="numeric" min="1" value={course.fractions}
                               onChange={(e) => updateCourse(item.oar.name, ci, "fractions", e.target.value)}
-                              className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 pr-10 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                              placeholder="0" />
-                            <span className="absolute right-3 top-2 text-xs text-gray-400">fx</span>
+                              className="w-full rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-2 pr-7 text-sm text-gray-900 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                              placeholder="fx" />
+                            <span className="absolute right-2 top-2.5 text-[10px] text-gray-300 pointer-events-none">fx</span>
                           </div>
                         </div>
-                        <div className="grid gap-1">
-                          <label className="text-xs font-medium text-gray-500">Time Since RT</label>
+                        <div>
+                          <label className="block text-[11px] font-medium text-gray-400 mb-1">Interval</label>
                           <div className="relative">
-                            <input type="number" min="0" value={course.timeSinceRT}
+                            <input type="number" inputMode="numeric" min="0" value={course.timeSinceRT}
                               onChange={(e) => updateCourse(item.oar.name, ci, "timeSinceRT", e.target.value)}
-                              className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 pr-10 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                              placeholder="0" />
-                            <span className="absolute right-3 top-2 text-xs text-gray-400">mo</span>
+                              className="w-full rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-2 pr-8 text-sm text-gray-900 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                              placeholder="mo" />
+                            <span className="absolute right-2 top-2.5 text-[10px] text-gray-300 pointer-events-none">mo</span>
                           </div>
                         </div>
                       </div>

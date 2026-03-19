@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
+import { RelatedTools } from "../components/RelatedTools";
 
 /* ── types ── */
 interface Treatment {
@@ -366,6 +367,8 @@ export default function MyelopathyPage() {
           </ol>
         </div>
       </section>
+
+      <RelatedTools current="/myelopathy" />
     </div>
   );
 }

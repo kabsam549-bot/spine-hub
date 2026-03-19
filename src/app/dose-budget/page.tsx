@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
+import { RelatedTools } from "../components/RelatedTools";
 import { OAR_DATABASE, getOARsByTier, type OARBudgetData, type ToxicityTier } from "@/lib/oarData";
 import {
   calculateOARBudget,
@@ -376,6 +377,54 @@ export default function DoseBudgetPage() {
           </div>
         </>
       )}
+
+      {/* Static SBRT Reference Table */}
+      <section className="fade-in-up">
+        <details className="rounded-2xl border border-gray-200 bg-white p-6 sm:p-8 shadow-sm">
+          <summary className="cursor-pointer list-none text-base font-semibold text-gray-900 flex items-center justify-between">
+            Quick Reference: Spinal Cord SBRT Dose Constraints
+            <svg className="h-5 w-5 text-gray-400 transition-transform details-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+          </summary>
+          <div className="mt-6 overflow-x-auto">
+            <table className="w-full min-w-[600px] text-left text-sm">
+              <thead>
+                <tr className="border-b border-gray-200 text-xs uppercase tracking-wider text-gray-500">
+                  <th className="py-3 pr-4 font-semibold">Scenario</th>
+                  <th className="py-3 pr-4 font-semibold">Metric</th>
+                  <th className="py-3 pr-4 font-semibold">Limit</th>
+                  <th className="py-3 pr-4 font-semibold">Endpoint</th>
+                  <th className="py-3 pr-4 font-semibold">Source</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ["Conventional (1.8-2 Gy/fx)", "Dmax", "45-50 Gy", "Myelopathy <0.2%", "QUANTEC"],
+                  ["Conventional (1.8-2 Gy/fx)", "Dmax", "54 Gy", "Myelopathy ~1%", "QUANTEC"],
+                  ["SBRT 1 fx", "Dmax (0.035cc)", "14 Gy", "Myelopathy <1%", "Sahgal / TG-101"],
+                  ["SBRT 1 fx", "Dmax (0.035cc)", "10 Gy", "Myelopathy <0.4%", "Sahgal 2010"],
+                  ["SBRT 3 fx", "Dmax (0.035cc)", "21.9 Gy", "Myelopathy <1%", "Sahgal 2010"],
+                  ["SBRT 3 fx", "D0.35cc", "18 Gy", "Myelopathy <1%", "TG-101"],
+                  ["SBRT 5 fx", "Dmax (0.035cc)", "30 Gy", "Myelopathy <1%", "Sahgal 2010"],
+                  ["SBRT 5 fx", "D0.035cc", "25.3 Gy", "Myelopathy <1%", "Sahgal 2019"],
+                  ["Reirradiation", "Cumulative BED\u2082", "\u2264120 Gy", "Low risk (~3%)", "Nieder"],
+                  ["Reirradiation", "Cumulative BED\u2082", "120-150 Gy", "Intermediate risk", "Nieder"],
+                  ["Reirradiation", "Interval", "\u22656 months", "Required for safe re-RT", "Nieder"],
+                ].map((row, i) => (
+                  <tr key={i} className={`border-b border-gray-50 ${i % 2 === 0 ? "bg-white" : "bg-gray-50/30"}`}>
+                    <td className="py-2.5 pr-4 text-gray-700">{row[0]}</td>
+                    <td className="py-2.5 pr-4 font-mono text-xs text-gray-600">{row[1]}</td>
+                    <td className="py-2.5 pr-4 font-semibold text-gray-900 tabular-nums">{row[2]}</td>
+                    <td className="py-2.5 pr-4 text-gray-600">{row[3]}</td>
+                    <td className="py-2.5 pr-4 text-xs text-gray-400">{row[4]}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </details>
+      </section>
+
+      <RelatedTools current="/dose-budget" />
 
       {/* Sources */}
       <section className="rounded-2xl border border-gray-200 bg-gray-50 p-8 sm:p-10 fade-in-up">

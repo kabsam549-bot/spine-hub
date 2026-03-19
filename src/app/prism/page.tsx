@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState, useEffect } from "react";
+import { RelatedTools } from "../components/RelatedTools";
 
 type Sex = "male" | "female";
 type Ecog = 0 | 1 | 2 | 3;
@@ -274,6 +275,8 @@ export default function PRISMPage() {
           </div>
         </details>
       </section>
+
+      <RelatedTools current="/prism" />
     </div>
   );
 }

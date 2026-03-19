@@ -62,3 +62,26 @@ a {
 summary::-webkit-details-marker {
   display: none;
 }
+
+/* Print styles */
+@media print {
+  header, footer, nav, button, .sticky {
+    display: none !important;
+  }
+  .fade-in-up {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  body {
+    font-size: 11px;
+  }
+  details[open] > summary ~ * {
+    display: block;
+  }
+}
+
+/* Tabular numbers for dose values */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}

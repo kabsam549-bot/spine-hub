@@ -21,6 +21,16 @@ export const metadata: Metadata = {
     "dose budget",
     "stereotactic radiosurgery",
   ],
+  icons: {
+    icon: "/favicon.svg",
+  },
+  openGraph: {
+    title: "SpineRT | Spine Radiation Clinical Tools",
+    description:
+      "Validated calculators for spine radiation: PRISM prognosis, myelopathy risk, and OAR dose budget with tissue recovery modeling.",
+    type: "website",
+    url: "https://spine-hub.vercel.app",
+  },
 };
 
 export default function RootLayout({

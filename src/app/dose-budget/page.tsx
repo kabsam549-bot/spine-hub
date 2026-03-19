@@ -223,13 +223,35 @@ export default function DoseBudgetPage() {
         <>
           {/* Instructions */}
           <section className="rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900 fade-in-up fade-delay-1">
-            <p className="font-semibold mb-1">How to use:</p>
-            <ol className="list-decimal list-inside space-y-1 ml-2">
+            <p className="font-semibold mb-2">How to use:</p>
+            <ol className="list-decimal list-inside space-y-1 ml-2 mb-4">
               <li>Select organs at risk from the list below</li>
               <li>Enter the <strong>actual prior dose</strong> each organ received (not prescription dose)</li>
               <li>Enter fractions and time since treatment (months)</li>
               <li>Click &quot;Calculate Dose Budgets&quot; to see remaining tolerance for each OAR</li>
             </ol>
+            <div className="border-t border-blue-200 pt-3">
+              <p className="font-semibold text-xs mb-2">Tissue Recovery Model</p>
+              <div className="grid grid-cols-4 gap-2 text-xs">
+                <div className="rounded-lg bg-white/60 p-2 text-center">
+                  <p className="font-bold text-red-600">&lt;6 mo</p>
+                  <p className="text-gray-600">0% recovery</p>
+                </div>
+                <div className="rounded-lg bg-white/60 p-2 text-center">
+                  <p className="font-bold text-amber-600">6--12 mo</p>
+                  <p className="text-gray-600">25% recovery</p>
+                </div>
+                <div className="rounded-lg bg-white/60 p-2 text-center">
+                  <p className="font-bold text-yellow-600">12--24 mo</p>
+                  <p className="text-gray-600">40% recovery</p>
+                </div>
+                <div className="rounded-lg bg-white/60 p-2 text-center">
+                  <p className="font-bold text-green-600">&gt;24 mo</p>
+                  <p className="text-gray-600">50% recovery</p>
+                </div>
+              </div>
+              <p className="text-[10px] text-blue-700 mt-1">Conservative estimates. Actual recovery varies by tissue type, dose, volume, and patient factors.</p>
+            </div>
           </section>
 
           {/* Selected OARs */}

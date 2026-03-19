@@ -2,6 +2,8 @@ import Link from "next/link";
 
 const allTools = [
   { href: "/prism", label: "PRISM Calculator", desc: "Prognostic scoring for spine SBRT" },
+  { href: "/sins", label: "SINS Calculator", desc: "Spinal instability neoplastic score" },
+  { href: "/noms", label: "NOMS Framework", desc: "Multidisciplinary treatment decision support" },
   { href: "/myelopathy", label: "Myelopathy Risk", desc: "Nieder reirradiation tolerance" },
   { href: "/dose-budget", label: "Dose Budget", desc: "OAR remaining tolerance calculator" },
 ];

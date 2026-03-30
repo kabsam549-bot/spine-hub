@@ -24,11 +24,11 @@ export const OAR_DATABASE: OARBudgetData[] = [
   {
     name: "Spinal Cord",
     tier: 1,
-    lifetimeToleranceEQD2: 70,
+    lifetimeToleranceEQD2: 72,
     alphaBeta: 2,
     complication: "Myelopathy",
     specialNote:
-      "Sahgal HyTEC: cumulative thecal sac EQD2 Dmax <=70 Gy. SBRT single fraction: Dmax 14 Gy (0.035cc). Nieder: low risk if cumulative BED2 <120 Gy, interval >=6 mo, no single course BED >=102 Gy.",
+      "MD Anderson lifetime cord tolerance: 72 Gy EQD2. Sahgal HyTEC: cumulative thecal sac EQD2 Dmax <=70 Gy. SBRT single fraction: Dmax 14 Gy (0.035cc). Nieder: low risk if cumulative BED2 <120 Gy, interval >=6 mo.",
   },
   {
     name: "Cauda Equina",

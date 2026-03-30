@@ -39,7 +39,7 @@ export function Nav() {
               <Link key={link.href} href={link.href}
                 className={`rounded-md px-3 py-1.5 font-medium transition-colors ${
                   isActive
-                    ? "bg-gray-900 text-white"
+                    ? "bg-blue-600 text-white"
                     : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
                 }`}>
                 {link.label}
@@ -69,7 +69,7 @@ export function Nav() {
             return (
               <Link key={link.href} href={link.href} onClick={() => setOpen(false)}
                 className={`block rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                  isActive ? "bg-gray-900 text-white" : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
+                  isActive ? "bg-blue-600 text-white" : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
                 }`}>
                 {link.label}
               </Link>

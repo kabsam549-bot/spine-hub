@@ -58,10 +58,50 @@ const scoreFromInput = (i: PRISMInput) => {
 };
 
 const groupFromScore = (score: number) => {
-  if (score > 7) return { group: "Group 1", prognosis: "Excellent", color: "#16a34a", bg: "bg-green-50", border: "border-green-200", text: "text-green-800", chip: "bg-green-100 text-green-800" };
-  if (score >= 4) return { group: "Group 2", prognosis: "Good", color: "#ca8a04", bg: "bg-yellow-50", border: "border-yellow-200", text: "text-yellow-800", chip: "bg-yellow-100 text-yellow-800" };
-  if (score >= 1) return { group: "Group 3", prognosis: "Intermediate", color: "#ea580c", bg: "bg-orange-50", border: "border-orange-200", text: "text-orange-800", chip: "bg-orange-100 text-orange-800" };
-  return { group: "Group 4", prognosis: "Poor", color: "#dc2626", bg: "bg-red-50", border: "border-red-200", text: "text-red-800", chip: "bg-red-100 text-red-800" };
+  if (score > 7) return { 
+    group: "Group 1", 
+    prognosis: "Excellent", 
+    medianSurvival: "34 months",
+    localControl: "92% at 1 year",
+    color: "#16a34a", 
+    bg: "bg-green-50", 
+    border: "border-green-200", 
+    text: "text-green-800", 
+    chip: "bg-green-100 text-green-800" 
+  };
+  if (score >= 4) return { 
+    group: "Group 2", 
+    prognosis: "Good", 
+    medianSurvival: "18 months",
+    localControl: "88% at 1 year",
+    color: "#ca8a04", 
+    bg: "bg-yellow-50", 
+    border: "border-yellow-200", 
+    text: "text-yellow-800", 
+    chip: "bg-yellow-100 text-yellow-800" 
+  };
+  if (score >= 1) return { 
+    group: "Group 3", 
+    prognosis: "Intermediate", 
+    medianSurvival: "10 months",
+    localControl: "83% at 1 year",
+    color: "#ea580c", 
+    bg: "bg-orange-50", 
+    border: "border-orange-200", 
+    text: "text-orange-800", 
+    chip: "bg-orange-100 text-orange-800" 
+  };
+  return { 
+    group: "Group 4", 
+    prognosis: "Poor", 
+    medianSurvival: "4 months",
+    localControl: "76% at 1 year",
+    color: "#dc2626", 
+    bg: "bg-red-50", 
+    border: "border-red-200", 
+    text: "text-red-800", 
+    chip: "bg-red-100 text-red-800" 
+  };
 };
 
 const contributionsFromInput = (i: PRISMInput) => [
@@ -205,7 +245,17 @@ export default function PRISMPage() {
               </div>
               <div className="h-16 w-2 rounded-full" style={{ backgroundColor: group.color }} />
             </div>
-            <div className="mt-5 rounded-xl bg-white/60 border border-gray-200/50 px-4 py-3 text-xs text-gray-500">
+            <div className="mt-5 grid sm:grid-cols-2 gap-3">
+              <div className="rounded-xl bg-white/60 border border-gray-200/50 px-4 py-3">
+                <p className="text-xs text-gray-500">Median Survival</p>
+                <p className="text-base font-bold" style={{ color: group.color }}>{group.medianSurvival}</p>
+              </div>
+              <div className="rounded-xl bg-white/60 border border-gray-200/50 px-4 py-3">
+                <p className="text-xs text-gray-500">Local Control</p>
+                <p className="text-base font-bold" style={{ color: group.color }}>{group.localControl}</p>
+              </div>
+            </div>
+            <div className="mt-3 rounded-xl bg-white/60 border border-gray-200/50 px-4 py-3 text-xs text-gray-500">
               Thresholds: &gt;7 (Excellent) | 4&ndash;7 (Good) | 1&ndash;3 (Intermediate) | &lt;1 (Poor)
             </div>
           </div>

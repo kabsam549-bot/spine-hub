@@ -167,8 +167,26 @@ export default function MyelopathyPage() {
         </p>
       </section>
 
+      {/* Legacy Tool Banner */}
+      <div className="rounded-2xl border-2 border-amber-200 bg-amber-50 p-6 fade-in-up fade-delay-1">
+        <div className="flex items-start gap-4">
+          <div className="flex-shrink-0 mt-0.5">
+            <svg className="h-6 w-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div className="flex-1">
+            <h3 className="text-base font-semibold text-amber-900">Legacy Reference Tool</h3>
+            <p className="mt-2 text-sm text-amber-800 leading-relaxed">
+              Historically, the Nieder myelopathy risk calculator was used to estimate spinal cord reirradiation tolerance. See referenced papers below. 
+              The <a href="/dose-budget" className="font-medium underline hover:text-amber-900">Dose Budget calculator</a> is recommended for clinical use.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Calculator */}
-      <section className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] fade-in-up fade-delay-1">
+      <section className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] fade-in-up fade-delay-2">
         <div className="rounded-2xl border border-gray-200 bg-white p-6 sm:p-8 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
@@ -351,7 +369,7 @@ export default function MyelopathyPage() {
       </section>
 
       {/* About */}
-      <section className="rounded-2xl border border-gray-200 bg-gray-50 p-8 sm:p-10 fade-in-up fade-delay-2">
+      <section className="rounded-2xl border border-gray-200 bg-gray-50 p-8 sm:p-10 fade-in-up fade-delay-3">
         <h2 className="text-xl font-semibold text-gray-900">About This Calculator</h2>
         <div className="mt-4 space-y-4 text-sm leading-relaxed text-gray-600">
           <p>

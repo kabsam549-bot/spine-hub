@@ -10,6 +10,7 @@ const links = [
   { href: "/noms", label: "NOMS" },
   { href: "/myelopathy", label: "Myelopathy" },
   { href: "/dose-budget", label: "Dose Budget" },
+  { href: "/lived-experience", label: "Our Data" },
 ];
 
 export function Nav() {

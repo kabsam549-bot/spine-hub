@@ -59,6 +59,11 @@ const colorMap: Record<string, { bg: string; border: string; badge: string; hove
 export default function HomePage() {
   return (
     <div className="flex flex-col gap-16">
+      {/* Disclaimer Banner */}
+      <div className="rounded-xl border-2 border-blue-200 bg-blue-50 px-6 py-4 text-sm text-blue-900 leading-relaxed">
+        <strong className="font-semibold">Educational Use Only:</strong> This platform is provided for educational purposes only and is not a clinical decision-making tool. All treatment decisions should be made by the treating physician in consultation with institutional protocols and multidisciplinary teams. The calculators presented here (PRISM, SINS, NOMS) are validated frameworks from published literature and do not require institutional disclaimers.
+      </div>
+
       {/* Hero */}
       <section className="flex flex-col gap-6 pt-8 sm:pt-12 fade-in-up">
         <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-blue-600">
@@ -144,6 +149,25 @@ export default function HomePage() {
             <p className="font-semibold text-gray-700 mb-1">ESCC Grading</p>
             <p>Bilsky et al. J Neurosurg Spine 2010. Six-point SOSG epidural compression scale.</p>
           </div>
+        </div>
+      </section>
+
+      {/* Program Information */}
+      <section className="rounded-2xl border border-blue-200 bg-gradient-to-br from-blue-50 to-white p-8 sm:p-10 fade-in-up fade-delay-3">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">About This Platform</h2>
+        <div className="space-y-4 text-sm text-gray-700 leading-relaxed">
+          <p>
+            <strong className="font-semibold text-gray-900">MD Anderson Cancer Center CNS Division:</strong> This platform was developed by the CNS Radiation Oncology Division at The University of Texas MD Anderson Cancer Center. Our team specializes in stereotactic radiosurgery and hypofractionated radiotherapy for primary and metastatic spine tumors.
+          </p>
+          <div className="rounded-lg bg-white border border-gray-200 p-4 text-xs">
+            <p className="font-semibold text-gray-900 mb-2">Leadership & Contact</p>
+            <p className="text-gray-600">Division Leadership: [Name placeholder]</p>
+            <p className="text-gray-600">Spine Program Director: [Name placeholder]</p>
+            <p className="text-gray-600 mt-2">Contact: [contact information placeholder]</p>
+          </div>
+          <p className="text-xs text-gray-500 bg-amber-50 border border-amber-200 rounded-lg p-3">
+            <strong className="text-amber-900">Single-Center Data Note:</strong> The "Our Data" section contains published institutional experience from MD Anderson. This represents a single-center perspective. Treatment approaches should be adapted to individual patient circumstances and institutional capabilities.
+          </p>
         </div>
       </section>
     </div>

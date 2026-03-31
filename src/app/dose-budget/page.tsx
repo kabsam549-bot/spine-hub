@@ -450,6 +450,74 @@ export default function DoseBudgetPage() {
         </details>
       </section>
 
+      {/* Legacy Nieder Myelopathy Reference */}
+      <section className="fade-in-up">
+        <details className="rounded-2xl border border-gray-200 bg-white shadow-sm">
+          <summary className="cursor-pointer list-none p-6 sm:p-8 flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-3">
+                <h2 className="text-lg font-semibold text-gray-900">Legacy: Nieder Myelopathy Risk Calculator</h2>
+                <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-[10px] font-semibold text-amber-700">Reference Only</span>
+              </div>
+              <p className="mt-1 text-sm text-gray-500">Historical three-variable scoring model for spinal cord reirradiation tolerance (Nieder et al. 2005, 2006).</p>
+            </div>
+            <svg className="h-5 w-5 text-gray-400 flex-shrink-0 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+          </summary>
+          <div className="border-t border-gray-100 px-6 sm:px-8 pb-6 sm:pb-8 pt-4">
+            <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 mb-6 text-sm text-amber-800 leading-relaxed">
+              <strong className="font-semibold text-amber-900">Note:</strong> The Nieder model is included for historical reference. The Dose Budget calculator above, based on EQD2 with lifetime tolerance ceilings, is the recommended approach for clinical reirradiation planning.
+            </div>
+            <div className="text-sm text-gray-600 space-y-4">
+              <div>
+                <h3 className="font-semibold text-gray-800 mb-2">Scoring Variables</h3>
+                <div className="space-y-2">
+                  <div className="rounded-lg bg-gray-50 p-3">
+                    <p className="font-medium text-gray-700">1. Cumulative BED (alpha/beta = 2 Gy)</p>
+                    <p className="text-xs text-gray-500 mt-1">0 pts if &le;120 Gy, then +1 pt per 10 Gy increment up to 9 pts (&gt;200 Gy)</p>
+                  </div>
+                  <div className="rounded-lg bg-gray-50 p-3">
+                    <p className="font-medium text-gray-700">2. Treatment Interval Penalty</p>
+                    <p className="text-xs text-gray-500 mt-1">+4.5 pts if any two courses are &lt;6 months apart</p>
+                  </div>
+                  <div className="rounded-lg bg-gray-50 p-3">
+                    <p className="font-medium text-gray-700">3. High Single Course Penalty</p>
+                    <p className="text-xs text-gray-500 mt-1">+4.5 pts if any single course BED &ge;102 Gy</p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-800 mb-2">Risk Interpretation</h3>
+                <div className="grid grid-cols-3 gap-2 text-xs">
+                  <div className="rounded-lg bg-green-50 border border-green-200 p-3 text-center">
+                    <p className="font-bold text-green-800">Low</p>
+                    <p className="text-green-700">Score &le;3</p>
+                    <p className="text-green-600 mt-1">~3% myelopathy</p>
+                  </div>
+                  <div className="rounded-lg bg-amber-50 border border-amber-200 p-3 text-center">
+                    <p className="font-bold text-amber-800">Intermediate</p>
+                    <p className="text-amber-700">Score 4-6</p>
+                    <p className="text-amber-600 mt-1">~25% myelopathy</p>
+                  </div>
+                  <div className="rounded-lg bg-red-50 border border-red-200 p-3 text-center">
+                    <p className="font-bold text-red-800">High</p>
+                    <p className="text-red-700">Score &gt;6</p>
+                    <p className="text-red-600 mt-1">~90% myelopathy</p>
+                  </div>
+                </div>
+              </div>
+              <div className="text-xs text-gray-500 pt-2">
+                <p className="font-semibold text-gray-700 mb-1">References</p>
+                <ol className="list-decimal list-inside space-y-1">
+                  <li>Nieder C, et al. Proposal of human spinal cord reirradiation dose based on collection of data from 40 patients. <span className="italic">IJROBP.</span> 2005;61(3):851-855.</li>
+                  <li>Nieder C, et al. Update of human spinal cord reirradiation tolerance based on additional data from 38 patients. <span className="italic">IJROBP.</span> 2006;66(5):1446-1449.</li>
+                </ol>
+              </div>
+              <p className="text-xs text-gray-400">For the full interactive Nieder calculator, visit <a href="/myelopathy" className="text-blue-500 hover:underline">/myelopathy</a> (legacy page).</p>
+            </div>
+          </div>
+        </details>
+      </section>
+
       <RelatedTools current="/dose-budget" />
 
       {/* Sources */}

@@ -5,11 +5,10 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 const links = [
+  { href: "/dose-budget", label: "Dose Budget" },
   { href: "/prism", label: "PRISM" },
   { href: "/sins", label: "SINS" },
   { href: "/noms", label: "NOMS" },
-  { href: "/myelopathy", label: "Myelopathy" },
-  { href: "/dose-budget", label: "Dose Budget" },
   { href: "/lived-experience", label: "Our Data" },
 ];
 

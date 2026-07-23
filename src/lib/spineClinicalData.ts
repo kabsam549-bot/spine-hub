@@ -424,8 +424,8 @@ export const MDACC_OAR_PLANNING_GOALS: OARPlanningGoal[] = [
     oneFraction: "V10 Gy <1 cc; D0.01 cc <12 Gy",
     threeFractions: "V9 Gy <1 cc; D0.01 cc <10 Gy",
     reirradiation:
-      "HyTEC lower-risk factors: cumulative thecal sac EQD2₂ Dmax ≤70 Gy, retreatment EQD2₂ Dmax ≤25 Gy, retreatment/cumulative ratio ≤0.5, interval ≥5 months.",
-    referenceIds: ["mackin-2026", "sahgal-2021"],
+      "Use the institutional working cumulative ceiling selected in the dose workspace, matched near-maximum cord or cord-PRV metrics, and mapped composite review. No recovery credit is applied.",
+    referenceIds: ["mackin-2026"],
   },
   {
     organ: "Cauda equina",
@@ -448,7 +448,7 @@ export const MDACC_OAR_PLANNING_GOALS: OARPlanningGoal[] = [
     oneFraction: "V14 Gy <3 cc; D0.01 cc <16 Gy",
     threeFractions: "V15 Gy <0.1 cc; D0.01 cc <18 Gy",
     reirradiation:
-      "Use composite EQD2₃ as a review aid. There is no validated spine reirradiation lifetime ceiling equivalent to the HyTEC cord model.",
+      "Use composite EQD2₃ as a review aid. Dedicated cumulative plexus reirradiation data are limited, so retain an editable case-reviewed ceiling.",
     referenceIds: ["mackin-2026"],
   },
   {

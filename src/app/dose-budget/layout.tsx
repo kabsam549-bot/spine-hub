@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Cord Reirradiation Dose Budget | SpineRT",
+  title: "Spine Reirradiation OAR Dose Workspace | Spine Hub",
   description:
-    "Interactive spinal cord and thecal sac reirradiation calculator using cumulative EQD2, HyTEC new-course limits, and MD Anderson planning context without recovery credit.",
+    "Multi-organ prior-dose budgets, reverse physical-dose calculations, and MD Anderson spine regimen comparison without recovery credit.",
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {

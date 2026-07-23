@@ -6,16 +6,15 @@ import {
   MDACC_OAR_PLANNING_GOALS,
   MDACC_RERT_REGIMENS,
   MDACC_RERT_SERVICE_TEMPLATES,
-  PUBLISHED_CORD_RERT_DMAX,
   SPINE_REFERENCES,
   regimenRadiobiology,
 } from "@/lib/spineClinicalData";
 
 const evidenceStyles = {
-  "Published MD Anderson series": "bg-emerald-100 text-emerald-800",
-  "Published MD Anderson workflow": "bg-blue-100 text-blue-800",
-  "MD Anderson program practice": "bg-amber-100 text-amber-800",
-  "International consensus": "bg-violet-100 text-violet-800",
+  "Published MD Anderson series": "bg-slate-100 text-slate-700",
+  "Published MD Anderson workflow": "bg-slate-100 text-slate-700",
+  "MD Anderson program practice": "bg-blue-100 text-blue-800",
+  "International consensus": "bg-slate-900 text-white",
 };
 
 function ReferenceLinks({ ids }: { ids: string[] }) {
@@ -50,7 +49,7 @@ function ReferenceLinks({ ids }: { ids: string[] }) {
 
 export default function LivedExperiencePage() {
   return (
-    <div className="flex flex-col gap-12">
+    <div className="mx-auto flex max-w-5xl flex-col gap-10">
       <section className="fade-in-up">
         <div className="mb-4 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-blue-600">
           <span className="h-px w-8 bg-blue-600" />
@@ -61,7 +60,7 @@ export default function LivedExperiencePage() {
         </h1>
         <p className="mt-3 max-w-3xl text-base leading-relaxed text-gray-500">
           A living reference for published MD Anderson dose regimens, current
-          program practice, neural reirradiation limits, and OAR planning goals.
+          program practice, cumulative OAR budget methods, and planning goals.
           Every item is labeled by evidence type so institutional practice is
           not mistaken for a validated universal standard.
         </p>
@@ -91,7 +90,7 @@ export default function LivedExperiencePage() {
             href="/dose-budget"
             className="inline-flex flex-none items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700"
           >
-            Test cord budget
+            Open OAR workspace
           </Link>
         </div>
 
@@ -247,10 +246,10 @@ export default function LivedExperiencePage() {
         </div>
       </section>
 
-      <section className="rounded-2xl border border-violet-200 bg-violet-50 p-6 sm:p-8">
+      <section className="rounded-2xl border border-slate-200 bg-slate-50 p-6 sm:p-8">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
           <div className="max-w-3xl">
-            <span className="rounded-full bg-violet-100 px-2.5 py-1 text-[10px] font-semibold text-violet-800">
+            <span className="rounded-full bg-slate-900 px-2.5 py-1 text-[10px] font-semibold text-white">
               International consensus
             </span>
             <h2 className="mt-3 text-lg font-semibold text-gray-900">
@@ -259,15 +258,15 @@ export default function LivedExperiencePage() {
             <p className="mt-2 text-sm leading-relaxed text-gray-600">
               The consensus panel recommends spine SBRT reirradiation for
               carefully selected patients and lists the following schedules. It
-              also recommends the HyTEC 2021 spinal cord limits, MRI-based target
-              and OAR delineation, and highly conformal image-guided delivery.
+              emphasizes MRI-based target and OAR delineation, careful
+              selection, and highly conformal image-guided delivery.
             </p>
           </div>
           <div className="grid flex-none grid-cols-2 gap-2">
             {ESTRO_ISRS_RERT_REGIMENS.map((regimen) => (
               <span
                 key={regimen}
-                className="rounded-lg border border-violet-200 bg-white px-3 py-2 text-center text-xs font-bold text-violet-900"
+                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-center text-xs font-bold text-slate-900"
               >
                 {regimen}
               </span>
@@ -367,85 +366,33 @@ export default function LivedExperiencePage() {
         </div>
       </section>
 
-      <section>
-        <h2 className="text-xl font-semibold text-gray-900">
-          Cord and thecal sac reirradiation guardrails
+      <section className="rounded-2xl border border-slate-200 bg-slate-50 p-6 sm:p-8">
+        <h2 className="text-xl font-semibold text-slate-950">
+          Institutional cumulative-budget method
         </h2>
-        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-gray-500">
-          HyTEC identifies a combination of factors associated with lower
-          myelopathy risk. These are not independent checkboxes. The calculator
-          applies all three dose conditions and shows a separate time alert.
+        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-slate-600">
+          The planning workspace uses a direct budget method: convert each
+          prior matched OAR endpoint to EQD2, sum without recovery credit,
+          subtract from the selected working ceiling, and reverse-convert the
+          remaining room across candidate fractionations.
         </p>
         <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            ["Cumulative Dmax", "≤70 Gy EQD2₂"],
-            ["New-course Dmax", "≤25 Gy EQD2₂"],
-            ["New / cumulative", "≤0.50"],
-            ["Minimum interval", "≥5 months"],
+            ["Cord working ceiling", "72 Gy EQD2₂"],
+            ["Prior dose", "Actual mapped OAR metric"],
+            ["Recovery credit", "None"],
+            ["Output", "1, 3, 5, and 10 fx room"],
           ].map(([label, value]) => (
             <div
               key={label}
-              className="rounded-xl border border-blue-200 bg-blue-50 p-4"
+              className="rounded-xl border border-slate-200 bg-white p-4"
             >
-              <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
                 {label}
               </p>
-              <p className="mt-2 text-2xl font-bold text-blue-950">{value}</p>
+              <p className="mt-2 text-lg font-bold text-slate-950">{value}</p>
             </div>
           ))}
-        </div>
-        <div className="mt-4 flex flex-wrap gap-3">
-          <ReferenceLinks ids={["sahgal-2021", "alongi-2026"]} />
-        </div>
-      </section>
-
-      <section>
-        <h2 className="text-xl font-semibold text-gray-900">
-          Published cord Dmax examples after conventional EBRT
-        </h2>
-        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-gray-500">
-          Physical retreatment Dmax values summarized in a 2023 review from the
-          Sahgal lower-risk criteria. Values refer to the neural avoidance
-          structure, not the target prescription.
-        </p>
-        <div className="mt-5 overflow-x-auto rounded-xl border border-gray-200">
-          <table className="min-w-[760px] w-full text-left text-sm">
-            <thead className="border-b border-gray-200 bg-gray-50">
-              <tr>
-                <th className="px-4 py-3 font-semibold text-gray-700">
-                  Prior course
-                </th>
-                <th className="px-4 py-3 font-semibold text-gray-700">
-                  Prior EQD2₂
-                </th>
-                <th className="px-4 py-3 font-semibold text-gray-700">1 fx</th>
-                <th className="px-4 py-3 font-semibold text-gray-700">2 fx</th>
-                <th className="px-4 py-3 font-semibold text-gray-700">3 fx</th>
-                <th className="px-4 py-3 font-semibold text-gray-700">4 fx</th>
-                <th className="px-4 py-3 font-semibold text-gray-700">5 fx</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100 bg-white">
-              {PUBLISHED_CORD_RERT_DMAX.map((row) => (
-                <tr key={row.prior}>
-                  <td className="px-4 py-3 font-semibold text-gray-900">
-                    {row.prior}
-                  </td>
-                  <td className="px-4 py-3 text-gray-600">
-                    {row.priorEQD2} Gy
-                  </td>
-                  <td className="px-4 py-3 text-gray-600">{row.one}</td>
-                  <td className="px-4 py-3 text-gray-600">{row.two}</td>
-                  <td className="px-4 py-3 text-gray-600">{row.three}</td>
-                  <td className="px-4 py-3 text-gray-600">{row.four}</td>
-                  <td className="px-4 py-3 text-gray-600">{row.five}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <div className="mt-4">
-          <ReferenceLinks ids={["gales-2023", "sahgal-2021"]} />
         </div>
       </section>
 
@@ -454,11 +401,10 @@ export default function LivedExperiencePage() {
           MD Anderson single-course OAR planning goals
         </h2>
         <p className="mt-2 max-w-3xl text-sm leading-relaxed text-gray-500">
-          These goals come from the published 2026 MD Anderson workflow. Except
-          for the cord/thecal sac HyTEC framework, they are not validated
-          cumulative reirradiation ceilings. The reirradiation column therefore
-          states how each should be used rather than inventing a remaining
-          lifetime budget.
+          These goals come from the published 2026 MD Anderson workflow. They
+          are single-course planning goals rather than universal cumulative
+          reirradiation ceilings. The reirradiation column therefore explains
+          the separate composite-dose review that remains necessary.
         </p>
         <div className="mt-5 overflow-x-auto rounded-xl border border-gray-200">
           <table className="min-w-[980px] w-full text-left text-sm">

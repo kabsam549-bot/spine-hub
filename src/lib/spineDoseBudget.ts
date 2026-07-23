@@ -3,74 +3,75 @@ import {
   calculateEQD2,
   eqd2ToPhysicalDoseExact,
 } from "./bedCalculations.ts";
+import type { OARBudgetProfile } from "./oarBudgetData.ts";
 
-export const SPINAL_CORD_ALPHA_BETA = 2;
-export const HYTEC_CUMULATIVE_CEILING = 70;
-export const HYTEC_NEW_COURSE_CAP = 25;
-export const HYTEC_RATIO_CAP = 0.5;
-export const HYTEC_MINIMUM_INTERVAL_MONTHS = 5;
-
-export interface PriorNeuralCourse {
+export interface PriorOARDose {
   totalDose: number;
   fractions: number;
   monthsSinceTreatment: number;
 }
 
-export interface DoseBudgetRule {
-  id: "cumulative" | "new-course" | "ratio";
-  label: string;
-  maximumNewCourseEQD2: number;
-  explanation: string;
+export interface OARBudgetInput {
+  profile: OARBudgetProfile;
+  priorCourses: PriorOARDose[];
+  ceilingEQD2?: number;
 }
 
-export interface SpineDoseBudgetResult {
-  priorCourses: Array<
-    PriorNeuralCourse & {
+export interface OARBudgetResult {
+  profile: OARBudgetProfile;
+  ceilingEQD2: number;
+  priorEQD2: number;
+  remainingEQD2: number;
+  percentUsed: number;
+  intervalUnderSixMonths: boolean;
+  courses: Array<
+    PriorOARDose & {
       dosePerFraction: number;
-      bed2: number;
+      bed: number;
       eqd2: number;
     }
   >;
-  priorEQD2: number;
-  cumulativeCeiling: number;
-  cumulativeRoom: number;
-  newCourseCap: number;
-  ratioCap: number;
-  allowableNewCourseEQD2: number;
-  rules: DoseBudgetRule[];
-  bindingRuleIds: DoseBudgetRule["id"][];
-  intervalBelowFiveMonths: boolean;
-  intervalFiveToSixMonths: boolean;
+  physicalByFractions: Array<{
+    fractions: number;
+    totalDose: number;
+    dosePerFraction: number;
+  }>;
 }
 
-export interface CandidateDoseResult {
-  totalDose: number;
-  fractions: number;
-  dosePerFraction: number;
-  eqd2: number;
+export interface RegimenRadiobiology {
+  gtvBED10: number;
+  gtvEQD2_10: number;
+  electiveBED10: number;
+  electiveEQD2_10: number;
+}
+
+export interface CandidateOARDoseCheck {
+  newCourseEQD2: number;
   cumulativeEQD2: number;
-  newToCumulativeRatio: number;
-  withinCumulativeCeiling: boolean;
-  withinNewCourseCap: boolean;
-  withinRatioCap: boolean;
-  withinCalculatedBudget: boolean;
+  remainingAfterCandidateEQD2: number;
   passes: boolean;
 }
 
-export function neuralEQD2(totalDose: number, fractions: number): number {
-  const bed = calculateBED(
-    totalDose,
-    fractions,
-    SPINAL_CORD_ALPHA_BETA,
+export function doseToEQD2(
+  totalDose: number,
+  fractions: number,
+  alphaBeta: number,
+): number {
+  return calculateEQD2(
+    calculateBED(totalDose, fractions, alphaBeta),
+    alphaBeta,
   );
-  return calculateEQD2(bed, SPINAL_CORD_ALPHA_BETA);
 }
 
-export function calculateSpineDoseBudget(
-  priorCourses: PriorNeuralCourse[],
-  cumulativeCeiling = HYTEC_CUMULATIVE_CEILING,
-): SpineDoseBudgetResult {
-  const parsedCourses = priorCourses
+export function calculateOARBudget(
+  input: OARBudgetInput,
+  fractionationOptions: number[] = [1, 3, 5, 10],
+): OARBudgetResult {
+  const ceilingEQD2 =
+    input.ceilingEQD2 && input.ceilingEQD2 > 0
+      ? input.ceilingEQD2
+      : input.profile.workingCeilingEQD2;
+  const courses = input.priorCourses
     .filter(
       (course) =>
         Number.isFinite(course.totalDose) &&
@@ -81,97 +82,74 @@ export function calculateSpineDoseBudget(
         course.monthsSinceTreatment >= 0,
     )
     .map((course) => {
-      const bed2 = calculateBED(
+      const dosePerFraction = course.totalDose / course.fractions;
+      const bed = calculateBED(
         course.totalDose,
         course.fractions,
-        SPINAL_CORD_ALPHA_BETA,
+        input.profile.alphaBeta,
       );
       return {
         ...course,
-        dosePerFraction: course.totalDose / course.fractions,
-        bed2,
-        eqd2: calculateEQD2(bed2, SPINAL_CORD_ALPHA_BETA),
+        dosePerFraction,
+        bed,
+        eqd2: calculateEQD2(bed, input.profile.alphaBeta),
       };
     });
-
-  const priorEQD2 = parsedCourses.reduce(
+  const priorEQD2 = courses.reduce(
     (total, course) => total + course.eqd2,
     0,
   );
-  const cumulativeRoom = Math.max(0, cumulativeCeiling - priorEQD2);
-
-  // x / (prior + x) <= 0.5 reduces algebraically to x <= prior.
-  const ratioCap = Math.max(0, priorEQD2);
-  const rules: DoseBudgetRule[] = [
-    {
-      id: "cumulative",
-      label: "70 Gy cumulative ceiling",
-      maximumNewCourseEQD2: cumulativeRoom,
-      explanation: `${cumulativeCeiling} − prior EQD2`,
-    },
-    {
-      id: "new-course",
-      label: "25 Gy new-course cap",
-      maximumNewCourseEQD2: HYTEC_NEW_COURSE_CAP,
-      explanation: "Published HyTEC new-course maximum",
-    },
-    {
-      id: "ratio",
-      label: "0.50 new-to-cumulative ratio",
-      maximumNewCourseEQD2: ratioCap,
-      explanation: "New / (prior + new) ≤ 0.50",
-    },
-  ];
-  const allowableNewCourseEQD2 = Math.max(
-    0,
-    Math.min(...rules.map((rule) => rule.maximumNewCourseEQD2)),
-  );
-  const bindingRuleIds = rules
-    .filter(
-      (rule) =>
-        Math.abs(rule.maximumNewCourseEQD2 - allowableNewCourseEQD2) <
-        1e-9,
-    )
-    .map((rule) => rule.id);
+  const remainingEQD2 = Math.max(0, ceilingEQD2 - priorEQD2);
+  const percentUsed =
+    ceilingEQD2 > 0
+      ? Math.min(100, Math.max(0, (priorEQD2 / ceilingEQD2) * 100))
+      : 100;
 
   return {
-    priorCourses: parsedCourses,
+    profile: input.profile,
+    ceilingEQD2,
     priorEQD2,
-    cumulativeCeiling,
-    cumulativeRoom,
-    newCourseCap: HYTEC_NEW_COURSE_CAP,
-    ratioCap,
-    allowableNewCourseEQD2,
-    rules,
-    bindingRuleIds,
-    intervalBelowFiveMonths: parsedCourses.some(
-      (course) =>
-        course.monthsSinceTreatment < HYTEC_MINIMUM_INTERVAL_MONTHS,
+    remainingEQD2,
+    percentUsed,
+    intervalUnderSixMonths: courses.some(
+      (course) => course.monthsSinceTreatment < 6,
     ),
-    intervalFiveToSixMonths: parsedCourses.some(
-      (course) =>
-        course.monthsSinceTreatment >= HYTEC_MINIMUM_INTERVAL_MONTHS &&
-        course.monthsSinceTreatment < 6,
-    ),
+    courses,
+    physicalByFractions: fractionationOptions.map((fractions) => {
+      const totalDose = eqd2ToPhysicalDoseExact(
+        remainingEQD2,
+        fractions,
+        input.profile.alphaBeta,
+      );
+      return {
+        fractions,
+        totalDose,
+        dosePerFraction: totalDose / fractions,
+      };
+    }),
   };
 }
 
-export function physicalDoseForBudget(
-  allowableNewCourseEQD2: number,
+export function calculateRegimenRadiobiology(
+  gtvDose: number,
+  electiveDose: number,
   fractions: number,
-): number {
-  return eqd2ToPhysicalDoseExact(
-    allowableNewCourseEQD2,
-    fractions,
-    SPINAL_CORD_ALPHA_BETA,
-  );
+): RegimenRadiobiology {
+  const gtvBED10 = calculateBED(gtvDose, fractions, 10);
+  const electiveBED10 = calculateBED(electiveDose, fractions, 10);
+  return {
+    gtvBED10,
+    gtvEQD2_10: calculateEQD2(gtvBED10, 10),
+    electiveBED10,
+    electiveEQD2_10: calculateEQD2(electiveBED10, 10),
+  };
 }
 
-export function evaluateCandidateDose(
-  budget: SpineDoseBudgetResult,
+export function evaluateCandidateOARDose(
+  budget: OARBudgetResult,
   totalDose: number,
   fractions: number,
-): CandidateDoseResult | null {
+): CandidateOARDoseCheck | null {
   if (
     !Number.isFinite(totalDose) ||
     totalDose <= 0 ||
@@ -180,36 +158,17 @@ export function evaluateCandidateDose(
   ) {
     return null;
   }
-
-  const eqd2 = neuralEQD2(totalDose, fractions);
-  const cumulativeEQD2 = budget.priorEQD2 + eqd2;
-  const newToCumulativeRatio =
-    cumulativeEQD2 > 0 ? eqd2 / cumulativeEQD2 : 0;
-  const epsilon = 1e-9;
-  const withinCumulativeCeiling =
-    cumulativeEQD2 <= budget.cumulativeCeiling + epsilon;
-  const withinNewCourseCap =
-    eqd2 <= HYTEC_NEW_COURSE_CAP + epsilon;
-  const withinRatioCap =
-    newToCumulativeRatio <= HYTEC_RATIO_CAP + epsilon;
-  const withinCalculatedBudget =
-    eqd2 <= budget.allowableNewCourseEQD2 + epsilon;
-
-  return {
+  const newCourseEQD2 = doseToEQD2(
     totalDose,
     fractions,
-    dosePerFraction: totalDose / fractions,
-    eqd2,
+    budget.profile.alphaBeta,
+  );
+  const cumulativeEQD2 = budget.priorEQD2 + newCourseEQD2;
+  return {
+    newCourseEQD2,
     cumulativeEQD2,
-    newToCumulativeRatio,
-    withinCumulativeCeiling,
-    withinNewCourseCap,
-    withinRatioCap,
-    withinCalculatedBudget,
-    passes:
-      withinCumulativeCeiling &&
-      withinNewCourseCap &&
-      withinRatioCap &&
-      withinCalculatedBudget,
+    remainingAfterCandidateEQD2:
+      budget.ceilingEQD2 - cumulativeEQD2,
+    passes: cumulativeEQD2 <= budget.ceilingEQD2 + 1e-9,
   };
 }

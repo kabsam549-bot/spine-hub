@@ -173,7 +173,7 @@ export default function PRISMPage() {
   };
 
   return (
-    <div className="flex flex-col gap-16">
+    <div className="mx-auto flex max-w-5xl flex-col gap-10">
       {/* Hero */}
       <section className="flex flex-col gap-4 fade-in-up">
         <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-blue-600">

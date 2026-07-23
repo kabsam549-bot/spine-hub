@@ -2,11 +2,11 @@
 
 :root {
   color-scheme: light;
-  --background: #ffffff;
-  --foreground: #1a1a2e;
-  --muted: #6b7280;
-  --accent: #1e40af;
-  --accent-light: #3b82f6;
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --muted: #64748b;
+  --accent: #1d4ed8;
+  --accent-light: #2563eb;
   --panel: #f8fafc;
   --panel-border: #e2e8f0;
   --panel-hover: #f1f5f9;
@@ -29,7 +29,6 @@ body {
   color: var(--foreground);
   font-family: var(--font-inter), "Inter", system-ui, -apple-system,
     "Segoe UI", sans-serif;
-  letter-spacing: 0.01em;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -42,21 +41,37 @@ a {
   background: rgba(30, 64, 175, 0.15);
 }
 
-.fade-in-up {
-  animation: fadeInUp 0.7s ease forwards;
-  opacity: 0;
-  transform: translateY(12px);
-}
+.fade-in-up { animation: fadeInUp 0.35s ease forwards; }
 
 .fade-delay-1 { animation-delay: 0.1s; }
 .fade-delay-2 { animation-delay: 0.2s; }
 .fade-delay-3 { animation-delay: 0.3s; }
 
 @keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
   to {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.28);
+  outline-offset: 2px;
 }
 
 summary::-webkit-details-marker {

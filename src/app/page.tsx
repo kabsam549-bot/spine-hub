@@ -1,237 +1,145 @@
 import Link from "next/link";
 
-const supportingTools = [
+const assessmentTools = [
   {
     href: "/prism",
     title: "PRISM",
-    subtitle: "Prognostic Index for Spinal Metastases",
-    description:
-      "Validated scoring system stratifying survival in spine SBRT patients into four prognostic groups.",
-    stats: "6 variables, 4 groups",
+    description: "Estimate prognosis after spine SBRT",
   },
   {
     href: "/sins",
     title: "SINS",
-    subtitle: "Spinal Instability Neoplastic Score",
-    description:
-      "Six-component assessment of spinal instability to guide surgical referral decisions.",
-    stats: "6 components, 0-18",
+    description: "Assess mechanical stability",
   },
   {
     href: "/noms",
     title: "NOMS",
-    subtitle: "Treatment Decision Framework",
-    description:
-      "MSKCC framework integrating neurologic, oncologic, mechanical, and systemic assessments.",
-    stats: "4 assessments",
+    description: "Structure multidisciplinary treatment decisions",
   },
 ];
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col gap-12">
-      {/* Hero */}
-      <section className="flex flex-col gap-5 pt-8 sm:pt-12">
-        <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-blue-600">
-          <span className="h-px w-8 bg-blue-600" />
-          Spine Radiation Tools
-        </div>
-        <h1 className="text-4xl font-bold leading-[1.1] text-gray-900 sm:text-5xl lg:text-6xl tracking-tight">
-          SpineRT
+    <div className="mx-auto flex max-w-6xl flex-col gap-12">
+      <section className="pt-8 sm:pt-14">
+        <p className="text-sm font-semibold text-blue-700">
+          Spine radiation decision support
+        </p>
+        <h1 className="mt-2 max-w-3xl text-4xl font-bold tracking-tight text-slate-950 sm:text-5xl">
+          What do you need to decide?
         </h1>
-        <p className="max-w-2xl text-lg leading-relaxed text-gray-500">
-          Clinical decision support for spine radiation therapy. Dose planning,
-          prognostic scoring, stability assessment, and treatment frameworks,
-          built on published evidence and institutional experience.
+        <p className="mt-4 max-w-2xl text-lg leading-relaxed text-slate-600">
+          Start with the clinical task. Supporting evidence and calculators
+          stay available when you need them.
         </p>
       </section>
 
-      {/* Dose Budget: Featured */}
-      <section>
+      <section className="grid gap-4 lg:grid-cols-2">
         <Link
           href="/dose-budget"
-          className="group relative block rounded-2xl border-2 border-blue-200 bg-gradient-to-br from-blue-50 via-white to-blue-50/50 p-8 sm:p-10 transition-all hover:border-blue-400 hover:shadow-lg"
+          className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-blue-400 hover:shadow-md sm:p-8"
         >
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
-            <div className="flex-1 space-y-4">
-              <div className="flex items-center gap-3">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-blue-500">
-                  Primary Tool
-                </span>
-                <span className="rounded-full bg-blue-100 px-2.5 py-0.5 text-[10px] font-semibold text-blue-700">
-                  13 OARs, 3 risk levels
-                </span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 group-hover:text-blue-700 transition-colors">
-                Dose Budget Calculator
-              </h2>
-              <p className="text-sm leading-relaxed text-gray-600 max-w-xl">
-                Calculate remaining OAR dose budgets for reirradiation using
-                EQD2 with adjustable risk tolerance. Enter prior courses, select
-                organs at risk, and get real-time remaining dose with visual
-                breakdowns. Includes standalone BED/EQD2 converter.
-              </p>
-              <div className="flex flex-wrap gap-3 text-xs text-gray-400 font-medium">
-                <span>EQD2 budgets</span>
-                <span>Risk tolerance toggle</span>
-                <span>Multi-OAR support</span>
-                <span>Visual dose bar</span>
-                <span>BED/EQD2 widget</span>
-              </div>
-            </div>
-            <div className="flex items-center">
-              <span className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white group-hover:bg-blue-700 transition-colors">
-                Open Calculator
-              </span>
-            </div>
-          </div>
+          <span className="text-xs font-semibold uppercase tracking-wider text-blue-700">
+            Reirradiation planning
+          </span>
+          <h2 className="mt-3 text-2xl font-bold text-slate-950">
+            Find the remaining OAR room
+          </h2>
+          <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-600">
+            Enter prior doses for cord, cauda, bowel, esophagus, and other
+            relevant organs. Reverse-calculate physical limits across
+            fractionations, compare target BED, and proof-check a candidate
+            plan.
+          </p>
+          <span className="mt-6 inline-flex items-center text-sm font-bold text-blue-700">
+            Open dose workspace <span className="ml-2">→</span>
+          </span>
+        </Link>
+
+        <Link
+          href="/management-algorithm"
+          className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-blue-400 hover:shadow-md sm:p-8"
+        >
+          <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+            Management
+          </span>
+          <h2 className="mt-3 text-2xl font-bold text-slate-950">
+            Work through the treatment pathway
+          </h2>
+          <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-600">
+            Review neurologic urgency, stability, prior radiation, histology,
+            disease burden, epidural anatomy, and the role of surgery or
+            radiation.
+          </p>
+          <span className="mt-6 inline-flex items-center text-sm font-bold text-blue-700">
+            Open management pathway <span className="ml-2">→</span>
+          </span>
         </Link>
       </section>
 
-      {/* Supporting Tools */}
       <section>
-        <h2 className="text-sm font-semibold uppercase tracking-widest text-gray-400 mb-5">
-          Assessment Tools
-        </h2>
-        <div className="grid gap-4 sm:grid-cols-3">
-          {supportingTools.map((tool) => (
+        <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              Focused calculators
+            </p>
+            <h2 className="mt-1 text-2xl font-bold text-slate-950">
+              Assess one question at a time
+            </h2>
+          </div>
+          <Link
+            href="/lived-experience"
+            className="text-sm font-semibold text-blue-700 hover:underline"
+          >
+            View regimens and constraints
+          </Link>
+        </div>
+        <div className="mt-5 grid gap-3 sm:grid-cols-3">
+          {assessmentTools.map((tool) => (
             <Link
               key={tool.href}
               href={tool.href}
-              className="group rounded-xl border border-gray-200 bg-white p-5 transition-all hover:border-blue-300 hover:shadow-md"
+              className="rounded-xl border border-slate-200 bg-white p-5 transition hover:border-slate-400"
             >
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
-                  {tool.title}
-                </h3>
-                <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold text-gray-500">
-                  {tool.stats}
-                </span>
-              </div>
-              <p className="text-xs font-medium text-gray-400 mb-2">
-                {tool.subtitle}
-              </p>
-              <p className="text-sm leading-relaxed text-gray-600">
+              <h3 className="text-lg font-bold text-slate-950">
+                {tool.title}
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-600">
                 {tool.description}
               </p>
-              <div className="mt-3 text-sm font-medium text-gray-400 group-hover:text-blue-500 transition-colors">
-                Open &rarr;
-              </div>
+              <span className="mt-4 block text-sm font-semibold text-blue-700">
+                Open →
+              </span>
             </Link>
           ))}
         </div>
       </section>
 
-      {/* Our Data link */}
-      <section>
+      <section className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-center rounded-2xl border border-slate-200 bg-slate-100/70 p-6 sm:p-8">
+        <div>
+          <h2 className="text-xl font-bold text-slate-950">
+            MD Anderson regimens, constraints, and practical notes
+          </h2>
+          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-slate-600">
+            Review the 1-, 3-, 5-, and 10-fraction directives, target
+            coverage, OAR checkpoints, published outcomes, and the situations
+            in which each approach is used.
+          </p>
+        </div>
         <Link
           href="/lived-experience"
-          className="group block rounded-xl border border-gray-200 bg-gray-50/50 p-6 transition-all hover:border-blue-300 hover:shadow-md"
+          className="w-fit rounded-lg bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800"
         >
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
-                Our Data
-              </h3>
-              <p className="text-sm text-gray-500 mt-1">
-                Published MD Anderson spine SBRT experience: dose regimens,
-                volume thresholds, local control rates, and OAR constraints by
-                fractionation scheme.
-              </p>
-            </div>
-            <span className="text-gray-400 group-hover:text-blue-500 transition-colors text-lg">
-              &rarr;
-            </span>
-          </div>
+          Open reference
         </Link>
       </section>
 
-      {/* Evidence Base */}
-      <section className="rounded-2xl border border-gray-200 bg-gray-50 p-8 sm:p-10">
-        <h2 className="text-lg font-semibold text-gray-900 mb-5">
-          Evidence Base
-        </h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 text-xs text-gray-500 leading-relaxed">
-          <div>
-            <p className="font-semibold text-gray-700 mb-1">
-              Prognostic Scoring
-            </p>
-            <p>
-              Jensen et al. IJROBP 2017 (PRISM). Florez, De, Kowalchuk et al.
-              Radiother Oncol 2024 (external validation).
-            </p>
-          </div>
-          <div>
-            <p className="font-semibold text-gray-700 mb-1">
-              Stability Assessment
-            </p>
-            <p>
-              Fisher et al. Spine 2010 (SINS). Fourney et al. JCO 2011
-              (validation). Spine Oncology Study Group consensus.
-            </p>
-          </div>
-          <div>
-            <p className="font-semibold text-gray-700 mb-1">
-              Treatment Framework
-            </p>
-            <p>
-              Laufer, Bilsky et al. Oncologist 2013 (NOMS). MSKCC
-              multidisciplinary spine team paradigm.
-            </p>
-          </div>
-          <div>
-            <p className="font-semibold text-gray-700 mb-1">
-              Cord Reirradiation
-            </p>
-            <p>
-              Nieder et al. IJROBP 2005, 2006. Sahgal et al. IJROBP 2012, 2021
-              (HyTEC).
-            </p>
-          </div>
-          <div>
-            <p className="font-semibold text-gray-700 mb-1">
-              Dose Constraints
-            </p>
-            <p>
-              QUANTEC (Marks 2010). AAPM TG-101 (Benedict 2010). Kirkpatrick et
-              al. IJROBP 2010.
-            </p>
-          </div>
-          <div>
-            <p className="font-semibold text-gray-700 mb-1">ESCC Grading</p>
-            <p>
-              Bilsky et al. J Neurosurg Spine 2010. Six-point SOSG epidural
-              compression scale.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Disclaimer + Program Info */}
-      <section className="space-y-4">
-        <div className="rounded-xl border border-blue-200 bg-blue-50 px-6 py-4 text-sm text-blue-900 leading-relaxed">
-          <strong className="font-semibold">Educational Use Only:</strong> This
-          platform is for educational purposes only and is not a clinical
-          decision-making tool. All treatment decisions should be made by the
-          treating physician in consultation with institutional protocols and
-          multidisciplinary teams.
-        </div>
-        <div className="rounded-xl border border-gray-200 bg-white p-6 text-sm text-gray-600 leading-relaxed space-y-3">
-          <p>
-            <strong className="font-semibold text-gray-900">
-              MD Anderson Cancer Center, CNS Division
-            </strong>{" "}
-            -- Developed by the CNS Radiation Oncology Division at The
-            University of Texas MD Anderson Cancer Center. Our team specializes
-            in stereotactic radiosurgery and hypofractionated radiotherapy for
-            primary and metastatic spine tumors.
-          </p>
-          <p className="text-xs text-gray-400">
-            Institutional data sections reflect single-center published
-            experience. Treatment approaches should be adapted to individual
-            patient circumstances and institutional capabilities.
-          </p>
-        </div>
+      <section className="rounded-xl border border-slate-200 bg-white p-5 text-xs leading-relaxed text-slate-500">
+        Spine Hub is educational clinical decision support. Institutional
+        sections summarize single-center practice and supplied service
+        directives. Treatment decisions require review of the original plans,
+        anatomy, composite dose, institutional protocol, and multidisciplinary
+        context.
       </section>
     </div>
   );

@@ -53,7 +53,6 @@ function getRecommendation(
   if (!escc || !radio || !stability || !systemic) return null;
 
   const highGrade = escc === "2" || escc === "3";
-  const lowGrade = !highGrade;
   const needsStabilization = stability === "unstable" || stability === "potentially-unstable";
 
   // Poor systemic = palliative only
@@ -110,10 +109,10 @@ function getRecommendation(
 }
 
 const sectionColors = {
-  N: { bg: "bg-violet-50", border: "border-violet-200", badge: "bg-violet-100 text-violet-700", icon: "text-violet-600" },
-  O: { bg: "bg-rose-50", border: "border-rose-200", badge: "bg-rose-100 text-rose-700", icon: "text-rose-600" },
-  M: { bg: "bg-amber-50", border: "border-amber-200", badge: "bg-amber-100 text-amber-700", icon: "text-amber-600" },
-  S: { bg: "bg-emerald-50", border: "border-emerald-200", badge: "bg-emerald-100 text-emerald-700", icon: "text-emerald-600" },
+  N: { bg: "bg-white", border: "border-slate-200", badge: "bg-slate-900 text-white", icon: "text-slate-700" },
+  O: { bg: "bg-white", border: "border-slate-200", badge: "bg-slate-900 text-white", icon: "text-slate-700" },
+  M: { bg: "bg-white", border: "border-slate-200", badge: "bg-slate-900 text-white", icon: "text-slate-700" },
+  S: { bg: "bg-white", border: "border-slate-200", badge: "bg-slate-900 text-white", icon: "text-slate-700" },
 };
 
 export default function NOMSPage() {
@@ -151,7 +150,7 @@ export default function NOMSPage() {
   }
 
   return (
-    <div className="flex flex-col gap-12">
+    <div className="mx-auto flex max-w-5xl flex-col gap-10">
       {/* Hero */}
       <section className="flex flex-col gap-4 fade-in-up">
         <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-blue-600">

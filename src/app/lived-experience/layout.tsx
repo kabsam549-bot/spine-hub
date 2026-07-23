@@ -1,9 +1,9 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Lived Experience | SpineRT",
+  title: "MD Anderson Spine Experience | SpineRT",
   description:
-    "MD Anderson CNS Division spine SBRT published data, dose constraints, and institutional experience.",
+    "Sourced MD Anderson spine SBRT regimens, institutional reirradiation practice, outcomes, neural dose limits, and OAR planning goals.",
 };
 
 export default function LivedExperienceLayout({

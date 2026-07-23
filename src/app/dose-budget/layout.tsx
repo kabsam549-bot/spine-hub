@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "OAR Dose Budget | SpineRT",
+  title: "Spine Reirradiation OAR Dose Workspace | Spine Hub",
   description:
-    "Interactive dose budget calculator for spine radiation OARs. Enter prior doses per organ, account for tissue recovery, and see remaining tolerance for re-irradiation planning.",
+    "Multi-organ prior-dose budgets, reverse physical-dose calculations, and MD Anderson spine regimen comparison without recovery credit.",
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {

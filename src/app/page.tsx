@@ -7,7 +7,7 @@ const supportingTools = [
     subtitle: "Prognostic Index for Spinal Metastases",
     description:
       "Validated scoring system stratifying survival in spine SBRT patients into four prognostic groups.",
-    stats: "6 variables, 4 groups",
+    stats: "7 variables, 4 groups",
   },
   {
     href: "/sins",
@@ -59,22 +59,22 @@ export default function HomePage() {
                   Primary Tool
                 </span>
                 <span className="rounded-full bg-blue-100 px-2.5 py-0.5 text-[10px] font-semibold text-blue-700">
-                  13 OARs, 3 risk levels
+                  3 frameworks, 4 guardrails
                 </span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 group-hover:text-blue-700 transition-colors">
                 Dose Budget Calculator
               </h2>
               <p className="text-sm leading-relaxed text-gray-600 max-w-xl">
-                Calculate remaining OAR dose budgets for reirradiation using
-                EQD2 with adjustable risk tolerance. Enter prior courses, select
-                organs at risk, and get real-time remaining dose with visual
-                breakdowns. Includes standalone BED/EQD2 converter.
+                Calculate a spinal cord or thecal sac reirradiation Dmax budget
+                using cumulative EQD2, the HyTEC new-course cap, and the
+                new-to-cumulative dose ratio. Check candidate neural constraints
+                without confusing an OAR budget with a target prescription.
               </p>
               <div className="flex flex-wrap gap-3 text-xs text-gray-400 font-medium">
-                <span>EQD2 budgets</span>
-                <span>Risk tolerance toggle</span>
-                <span>Multi-OAR support</span>
+                <span>No recovery credit</span>
+                <span>HyTEC guardrails</span>
+                <span>Candidate Dmax check</span>
                 <span>Visual dose bar</span>
                 <span>BED/EQD2 widget</span>
               </div>
@@ -84,6 +84,35 @@ export default function HomePage() {
                 Open Calculator
               </span>
             </div>
+          </div>
+        </Link>
+      </section>
+
+      {/* Management algorithm */}
+      <section>
+        <Link
+          href="/management-algorithm"
+          className="group block rounded-2xl border border-violet-200 bg-violet-50/60 p-6 transition-all hover:border-violet-400 hover:shadow-md sm:p-8"
+        >
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <h2 className="text-xl font-bold text-gray-900 group-hover:text-violet-700">
+                  Spine Metastasis Management Algorithm
+                </h2>
+                <span className="rounded-full bg-violet-100 px-2.5 py-1 text-[10px] font-semibold text-violet-700">
+                  MD Anderson pathway
+                </span>
+              </div>
+              <p className="mt-2 max-w-3xl text-sm leading-relaxed text-gray-600">
+                Walk through prognosis, neurologic urgency, mechanical
+                stability, indication for treatment, prior radiation,
+                radiosensitivity, disease burden, and epidural anatomy.
+              </p>
+            </div>
+            <span className="w-fit rounded-lg bg-violet-700 px-4 py-2 text-xs font-semibold text-white">
+              Open pathway
+            </span>
           </div>
         </Link>
       </section>
@@ -134,9 +163,9 @@ export default function HomePage() {
                 Our Data
               </h3>
               <p className="text-sm text-gray-500 mt-1">
-                Published MD Anderson spine SBRT experience: dose regimens,
-                volume thresholds, local control rates, and OAR constraints by
-                fractionation scheme.
+                Sourced MD Anderson spine SBRT regimens, service-template
+                constraints, program practice, outcome data, and neural
+                reirradiation limits with explicit evidence labels.
               </p>
             </div>
             <span className="text-gray-400 group-hover:text-blue-500 transition-colors text-lg">
@@ -157,7 +186,8 @@ export default function HomePage() {
               Prognostic Scoring
             </p>
             <p>
-              Jensen et al. IJROBP 2017 (PRISM). Florez, De, Kowalchuk et al.
+              Tang et al. IJROBP 2015 (PRISM). Jensen et al. J Radiosurg SBRT
+              2017 (internal validation). Florez, De, Kowalchuk et al.
               Radiother Oncol 2024 (external validation).
             </p>
           </div>
@@ -175,8 +205,8 @@ export default function HomePage() {
               Treatment Framework
             </p>
             <p>
-              Laufer, Bilsky et al. Oncologist 2013 (NOMS). MSKCC
-              multidisciplinary spine team paradigm.
+              Bahouth, Yeboa, Ghia et al. BJR 2023 (MD Anderson algorithm).
+              Laufer, Bilsky et al. Oncologist 2013 (NOMS).
             </p>
           </div>
           <div>
@@ -184,8 +214,9 @@ export default function HomePage() {
               Cord Reirradiation
             </p>
             <p>
-              Nieder et al. IJROBP 2005, 2006. Sahgal et al. IJROBP 2012, 2021
-              (HyTEC).
+              Sahgal et al. IJROBP 2021 (HyTEC). Alongi et al. Radiother Oncol
+              2026 (ESTRO-ISRS consensus). Nieder et al. IJROBP 2005, 2006
+              (legacy model).
             </p>
           </div>
           <div>
@@ -193,8 +224,8 @@ export default function HomePage() {
               Dose Constraints
             </p>
             <p>
-              QUANTEC (Marks 2010). AAPM TG-101 (Benedict 2010). Kirkpatrick et
-              al. IJROBP 2010.
+              Mackin, Cifter, Ghia et al. Cancers 2026 (MD Anderson workflow).
+              Sahgal et al. IJROBP 2021 (neural reirradiation).
             </p>
           </div>
           <div>
@@ -219,12 +250,11 @@ export default function HomePage() {
         <div className="rounded-xl border border-gray-200 bg-white p-6 text-sm text-gray-600 leading-relaxed space-y-3">
           <p>
             <strong className="font-semibold text-gray-900">
-              MD Anderson Cancer Center, CNS Division
+              MD Anderson evidence focus.
             </strong>{" "}
-            -- Developed by the CNS Radiation Oncology Division at The
-            University of Texas MD Anderson Cancer Center. Our team specializes
-            in stereotactic radiosurgery and hypofractionated radiotherapy for
-            primary and metastatic spine tumors.
+            The institutional sections summarize published MD Anderson spine
+            radiation oncology experience and clearly labeled program-practice
+            regimens.
           </p>
           <p className="text-xs text-gray-400">
             Institutional data sections reflect single-center published

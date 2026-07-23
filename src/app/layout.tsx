@@ -11,7 +11,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "SpineRT | Spine Radiation Tools",
   description:
-    "Clinical calculators for spine radiation therapy: PRISM prognostic index, myelopathy risk assessment (Nieder), and spinal cord dose budget.",
+    "Clinical decision support for spine radiation therapy: management pathways, reirradiation dose budgets, PRISM, SINS, NOMS, and sourced MD Anderson experience.",
   keywords: [
     "spine SBRT",
     "PRISM",
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "SpineRT | Spine Radiation Clinical Tools",
     description:
-      "Validated calculators for spine radiation: PRISM prognosis, myelopathy risk, and OAR dose budget with tissue recovery modeling.",
+      "Spine radiation decision support with an MD Anderson management pathway, neural reirradiation guardrails, validated calculators, and sourced institutional experience.",
     type: "website",
     url: "https://spine-hub.vercel.app",
   },

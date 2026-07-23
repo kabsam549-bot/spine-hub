@@ -1,11 +1,12 @@
 import Link from "next/link";
 
 const allTools = [
+  { href: "/management-algorithm", label: "Management Algorithm", desc: "MD Anderson multidisciplinary spine pathway" },
   { href: "/prism", label: "PRISM Calculator", desc: "Prognostic scoring for spine SBRT" },
   { href: "/sins", label: "SINS Calculator", desc: "Spinal instability neoplastic score" },
   { href: "/noms", label: "NOMS Framework", desc: "Multidisciplinary treatment decision support" },
   { href: "/myelopathy", label: "Myelopathy Risk", desc: "Nieder reirradiation tolerance" },
-  { href: "/dose-budget", label: "Dose Budget", desc: "OAR remaining tolerance calculator" },
+  { href: "/dose-budget", label: "Cord Dose Budget", desc: "Composite neural reirradiation guardrails" },
 ];
 
 export function RelatedTools({ current }: { current: string }) {

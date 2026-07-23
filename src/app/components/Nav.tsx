@@ -6,6 +6,7 @@ import { useState } from "react";
 
 const links = [
   { href: "/dose-budget", label: "Dose Budget" },
+  { href: "/management-algorithm", label: "Algorithm" },
   { href: "/prism", label: "PRISM" },
   { href: "/sins", label: "SINS" },
   { href: "/noms", label: "NOMS" },
@@ -49,7 +50,8 @@ export function Nav() {
 
         {/* Mobile hamburger */}
         <button onClick={() => setOpen(!open)} className="md:hidden p-2 -mr-2 text-gray-500 hover:text-gray-900"
-          aria-label="Toggle menu">
+          aria-label="Toggle menu"
+          aria-expanded={open}>
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             {open ? (
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />

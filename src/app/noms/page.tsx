@@ -53,7 +53,6 @@ function getRecommendation(
   if (!escc || !radio || !stability || !systemic) return null;
 
   const highGrade = escc === "2" || escc === "3";
-  const lowGrade = !highGrade;
   const needsStabilization = stability === "unstable" || stability === "potentially-unstable";
 
   // Poor systemic = palliative only

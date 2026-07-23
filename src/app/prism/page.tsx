@@ -1,44 +1,39 @@
 "use client";
 
-import { useMemo, useRef, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { RelatedTools } from "../components/RelatedTools";
 
 type Sex = "male" | "female";
-type Ecog = 0 | 1 | 2 | 3;
+type Kps = 50 | 60 | 70 | 80 | 90 | 100;
 
 interface PRISMInput {
   sex: Sex;
-  ecog: Ecog;
+  kps: Kps;
   priorSurgery: boolean;
   priorRadiation: boolean;
   organSystemsWithMets: number;
-  solitaryBoneDisease: boolean;
+  solitaryMetastasis: boolean;
   timeDxToMet5Years: boolean;
 }
 
 const DEFAULT_INPUT: PRISMInput = {
   sex: "male",
-  ecog: 0,
+  kps: 80,
   priorSurgery: false,
   priorRadiation: false,
   organSystemsWithMets: 0,
-  solitaryBoneDisease: false,
+  solitaryMetastasis: false,
   timeDxToMet5Years: false,
 };
 
-const coxRows = [
-  { variable: "Age", uni: "0.990 (0.980\u20131.000)", uniP: "0.0549", multi: "\u2014", multiP: "\u2014" },
-  { variable: "Male sex", uni: "0.655 (0.505\u20130.850)", uniP: "0.0015", multi: "0.711 (0.542\u20130.933)", multiP: "0.0140" },
-  { variable: "Primary histology", uni: "0.982 (0.946\u20131.020)", uniP: "0.3480", multi: "\u2014", multiP: "\u2014" },
-  { variable: "BED10", uni: "1.010 (1.000\u20131.020)", uniP: "0.0577", multi: "\u2014", multiP: "\u2014" },
-  { variable: "ECOG", uni: "2.420 (2.080\u20132.810)", uniP: "<0.0001", multi: "4.124 (2.932\u20135.801)", multiP: "<0.0001" },
-  { variable: "Spinal level treated", uni: "0.913 (0.768\u20131.080)", uniP: "0.2990", multi: "\u2014", multiP: "\u2014" },
-  { variable: "Prior surgery", uni: "1.110 (0.809\u20131.530)", uniP: "0.5110", multi: "\u2014", multiP: "\u2014" },
-  { variable: "Prior RT", uni: "0.645 (0.403\u20131.030)", uniP: "0.0679", multi: "\u2014", multiP: "\u2014" },
-  { variable: "Number of organs involved", uni: "1.530 (1.360\u20131.720)", uniP: "<0.0001", multi: "1.338 (1.149\u20131.559)", multiP: "0.0002" },
-  { variable: "Solitary bone metastasis", uni: "0.512 (0.384\u20130.683)", uniP: "<0.0001", multi: "0.729 (0.522\u20131.018)", multiP: "0.0631" },
-  { variable: "Brain metastasis", uni: "2.630 (1.670\u20134.160)", uniP: "<0.0001", multi: "1.135 (0.673\u20131.913)", multiP: "0.6350" },
-  { variable: "Treatment latency", uni: "0.969 (0.946\u20130.992)", uniP: "0.0087", multi: "0.973 (0.951\u20130.995)", multiP: "0.0155" },
+const componentRows = [
+  { variable: "Female sex", score: "+2" },
+  { variable: "Karnofsky Performance Status", score: "+1 per 10 points over 60" },
+  { variable: "Previous surgery at the SSRS site", score: "+2" },
+  { variable: "Previous radiation at the SSRS site", score: "\u22122" },
+  { variable: "Other organ systems with metastasis, excluding bone", score: "\u22121 per system" },
+  { variable: "SSRS for a solitary metastasis", score: "+3" },
+  { variable: "Diagnosis-to-metastasis interval >5 years", score: "+3" },
 ];
 
 const fmt = (n: number) => (Number.isInteger(n) ? n.toString() : n.toFixed(1));
@@ -46,13 +41,11 @@ const fmt = (n: number) => (Number.isInteger(n) ? n.toString() : n.toFixed(1));
 const scoreFromInput = (i: PRISMInput) => {
   let s = 0;
   if (i.sex === "female") s += 2;
-  if (i.ecog === 0) s += 3.5;
-  else if (i.ecog === 1) s += 1.5;
-  else if (i.ecog === 2) s += 0.5;
-  if (i.priorSurgery) s += 1;
-  if (i.priorRadiation) s -= 1;
+  s += Math.max(0, (i.kps - 60) / 10);
+  if (i.priorSurgery) s += 2;
+  if (i.priorRadiation) s -= 2;
   s -= i.organSystemsWithMets;
-  if (i.solitaryBoneDisease) s += 3;
+  if (i.solitaryMetastasis) s += 3;
   if (i.timeDxToMet5Years) s += 3;
   return s;
 };
@@ -61,8 +54,9 @@ const groupFromScore = (score: number) => {
   if (score > 7) return { 
     group: "Group 1", 
     prognosis: "Excellent", 
-    medianSurvival: "34 months",
-    localControl: "92% at 1 year",
+    derivationSurvival: "Not reached",
+    validationSurvival: "Not reached",
+    externalSurvival: "57.1 months",
     color: "#16a34a", 
     bg: "bg-green-50", 
     border: "border-green-200", 
@@ -72,8 +66,9 @@ const groupFromScore = (score: number) => {
   if (score >= 4) return { 
     group: "Group 2", 
     prognosis: "Good", 
-    medianSurvival: "18 months",
-    localControl: "88% at 1 year",
+    derivationSurvival: "32.4 months",
+    validationSurvival: "24.1 months",
+    externalSurvival: "37.0 months",
     color: "#ca8a04", 
     bg: "bg-yellow-50", 
     border: "border-yellow-200", 
@@ -83,8 +78,9 @@ const groupFromScore = (score: number) => {
   if (score >= 1) return { 
     group: "Group 3", 
     prognosis: "Intermediate", 
-    medianSurvival: "10 months",
-    localControl: "83% at 1 year",
+    derivationSurvival: "22.2 months",
+    validationSurvival: "13.1 months",
+    externalSurvival: "23.7 months",
     color: "#ea580c", 
     bg: "bg-orange-50", 
     border: "border-orange-200", 
@@ -94,8 +90,9 @@ const groupFromScore = (score: number) => {
   return { 
     group: "Group 4", 
     prognosis: "Poor", 
-    medianSurvival: "4 months",
-    localControl: "76% at 1 year",
+    derivationSurvival: "9.1 months",
+    validationSurvival: "6.5 months",
+    externalSurvival: "8.8 months",
     color: "#dc2626", 
     bg: "bg-red-50", 
     border: "border-red-200", 
@@ -106,24 +103,44 @@ const groupFromScore = (score: number) => {
 
 const contributionsFromInput = (i: PRISMInput) => [
   { label: "Sex", detail: i.sex === "female" ? "Female" : "Male", value: i.sex === "female" ? 2 : 0 },
-  { label: "ECOG", detail: `Status ${i.ecog}`, value: i.ecog === 0 ? 3.5 : i.ecog === 1 ? 1.5 : i.ecog === 2 ? 0.5 : 0 },
-  { label: "Prior surgery", detail: i.priorSurgery ? "Yes" : "No", value: i.priorSurgery ? 1 : 0 },
-  { label: "Prior radiation", detail: i.priorRadiation ? "Yes" : "No", value: i.priorRadiation ? -1 : 0 },
+  { label: "KPS", detail: `${i.kps}`, value: Math.max(0, (i.kps - 60) / 10) },
+  { label: "Prior surgery", detail: i.priorSurgery ? "Yes" : "No", value: i.priorSurgery ? 2 : 0 },
+  { label: "Prior radiation", detail: i.priorRadiation ? "Yes" : "No", value: i.priorRadiation ? -2 : 0 },
   { label: "Other organ systems with metastasis", detail: `${i.organSystemsWithMets}`, value: -i.organSystemsWithMets },
-  { label: "Solitary bone disease", detail: i.solitaryBoneDisease ? "Yes" : "No", value: i.solitaryBoneDisease ? 3 : 0 },
+  { label: "SSRS for solitary metastasis", detail: i.solitaryMetastasis ? "Yes" : "No", value: i.solitaryMetastasis ? 3 : 0 },
   { label: "Time from dx to met >5 years", detail: i.timeDxToMet5Years ? "Yes" : "No", value: i.timeDxToMet5Years ? 3 : 0 },
 ];
 
-function useInView() {
-  const ref = useRef<HTMLElement | null>(null);
-  const [vis, setVis] = useState(false);
-  useEffect(() => {
-    if (!ref.current) return;
-    const o = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVis(true); o.disconnect(); } }, { threshold: 0.15 });
-    o.observe(ref.current);
-    return () => o.disconnect();
-  }, []);
-  return { ref, vis };
+function Toggle({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: boolean;
+  onChange: (value: boolean) => void;
+}) {
+  return (
+    <div className="grid gap-2">
+      <label className="text-sm font-medium text-gray-700">{label}</label>
+      <div className="flex gap-2">
+        {([true, false] as const).map((option) => (
+          <button
+            key={option ? "y" : "n"}
+            type="button"
+            onClick={() => onChange(option)}
+            className={`flex-1 rounded-lg border px-4 py-2.5 text-sm font-medium transition-all ${
+              value === option
+                ? "border-blue-600 bg-blue-600 text-white shadow-sm"
+                : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50"
+            }`}
+          >
+            {option ? "Yes" : "No"}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export default function PRISMPage() {
@@ -134,16 +151,11 @@ export default function PRISMPage() {
   const group = useMemo(() => groupFromScore(score), [score]);
   const breakdown = useMemo(() => contributionsFromInput(input), [input]);
 
-  const hero = useInView();
-  const calc = useInView();
-  const about = useInView();
-  const reference = useInView();
-
   const handleOrganChange = (value: number) => {
     const clamped = Math.max(0, Math.floor(Number.isNaN(value) ? 0 : value));
-    if (input.solitaryBoneDisease && clamped > 0) {
-      setWarning("Solitary bone disease requires 0 other organ systems. It has been deselected.");
-      setInput((p) => ({ ...p, organSystemsWithMets: clamped, solitaryBoneDisease: false }));
+    if (input.solitaryMetastasis && clamped > 0) {
+      setWarning("A solitary metastasis requires 0 other organ systems. It has been deselected.");
+      setInput((p) => ({ ...p, organSystemsWithMets: clamped, solitaryMetastasis: false }));
       return;
     }
     setWarning(null);
@@ -152,31 +164,18 @@ export default function PRISMPage() {
 
   const handleSolitaryChange = (checked: boolean) => {
     if (checked && input.organSystemsWithMets > 0) {
-      setWarning("Solitary bone disease requires 0 other organ systems. The organ count has been reset to 0.");
-      setInput((p) => ({ ...p, solitaryBoneDisease: true, organSystemsWithMets: 0 }));
+      setWarning("A solitary metastasis requires 0 other organ systems. The organ count has been reset to 0.");
+      setInput((p) => ({ ...p, solitaryMetastasis: true, organSystemsWithMets: 0 }));
       return;
     }
     setWarning(null);
-    setInput((p) => ({ ...p, solitaryBoneDisease: checked }));
+    setInput((p) => ({ ...p, solitaryMetastasis: checked }));
   };
-
-  const Toggle = ({ label, value, onChange }: { label: string; value: boolean; onChange: (v: boolean) => void }) => (
-    <div className="grid gap-2">
-      <label className="text-sm font-medium text-gray-700">{label}</label>
-      <div className="flex gap-2">
-        {([true, false] as const).map((v) => (
-          <button key={v ? "y" : "n"} type="button" onClick={() => onChange(v)}
-            className={`flex-1 rounded-lg border px-4 py-2.5 text-sm font-medium transition-all ${value === v ? "border-blue-600 bg-blue-600 text-white shadow-sm" : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50"}`}
-          >{v ? "Yes" : "No"}</button>
-        ))}
-      </div>
-    </div>
-  );
 
   return (
     <div className="flex flex-col gap-16">
       {/* Hero */}
-      <section ref={hero.ref as React.RefObject<HTMLElement>} className={`flex flex-col gap-4 ${hero.vis ? "fade-in-up" : "opacity-0 translate-y-3"}`}>
+      <section className="flex flex-col gap-4 fade-in-up">
         <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-blue-600">
           <span className="h-px w-8 bg-blue-600" />Clinical Calculator
         </div>
@@ -189,7 +188,7 @@ export default function PRISMPage() {
       </section>
 
       {/* Calculator */}
-      <section id="calculator" ref={calc.ref as React.RefObject<HTMLElement>} className={`grid gap-8 lg:grid-cols-[1.15fr_0.85fr] ${calc.vis ? "fade-in-up fade-delay-1" : "opacity-0 translate-y-3"}`}>
+      <section id="calculator" className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] fade-in-up fade-delay-1">
         <div className="rounded-2xl border border-gray-200 bg-white p-6 sm:p-8 shadow-sm">
           <h2 className="text-xl font-semibold text-gray-900">Calculator</h2>
           <p className="mt-1 text-sm text-gray-500">Enter clinical variables. Score updates in real time.</p>
@@ -205,17 +204,17 @@ export default function PRISMPage() {
                 ))}
               </div>
             </div>
-            {/* ECOG */}
+            {/* KPS */}
             <div className="grid gap-2">
-              <label className="text-sm font-medium text-gray-700">ECOG Performance Status</label>
-              <div className="grid grid-cols-4 gap-2">
-                {([0, 1, 2, 3] as Ecog[]).map((v) => (
-                  <button key={v} type="button" onClick={() => setInput((p) => ({ ...p, ecog: v }))}
-                    className={`rounded-lg border px-4 py-2.5 text-sm font-medium transition-all ${input.ecog === v ? "border-blue-600 bg-blue-600 text-white shadow-sm" : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50"}`}
+              <label className="text-sm font-medium text-gray-700">Karnofsky Performance Status</label>
+              <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
+                {([50, 60, 70, 80, 90, 100] as Kps[]).map((v) => (
+                  <button key={v} type="button" onClick={() => setInput((p) => ({ ...p, kps: v }))}
+                    className={`rounded-lg border px-3 py-2.5 text-sm font-medium transition-all ${input.kps === v ? "border-blue-600 bg-blue-600 text-white shadow-sm" : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50"}`}
                   >{v}</button>
                 ))}
               </div>
-              <p className="text-xs text-gray-400">ECOG 3 or greater contributes 0 points.</p>
+              <p className="text-xs text-gray-400">+1 point for each 10-point increment above KPS 60.</p>
             </div>
             <Toggle label="Prior surgery at SBRT site" value={input.priorSurgery} onChange={(v) => setInput((p) => ({ ...p, priorSurgery: v }))} />
             <Toggle label="Prior radiation at SBRT site" value={input.priorRadiation} onChange={(v) => setInput((p) => ({ ...p, priorRadiation: v }))} />
@@ -225,7 +224,7 @@ export default function PRISMPage() {
                 className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all" />
               <p className="text-xs text-gray-400">Count distinct non-bone organ systems (lung, liver, brain, etc.).</p>
             </div>
-            <Toggle label="Solitary bone disease (no other organ mets)" value={input.solitaryBoneDisease} onChange={handleSolitaryChange} />
+            <Toggle label="SSRS for a solitary metastasis" value={input.solitaryMetastasis} onChange={handleSolitaryChange} />
             <Toggle label="Time from diagnosis to metastasis >5 years" value={input.timeDxToMet5Years} onChange={(v) => setInput((p) => ({ ...p, timeDxToMet5Years: v }))} />
           </div>
           {warning && <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">{warning}</div>}
@@ -245,16 +244,25 @@ export default function PRISMPage() {
               </div>
               <div className="h-16 w-2 rounded-full" style={{ backgroundColor: group.color }} />
             </div>
-            <div className="mt-5 grid sm:grid-cols-2 gap-3">
+            <div className="mt-5 grid sm:grid-cols-3 gap-3">
               <div className="rounded-xl bg-white/60 border border-gray-200/50 px-4 py-3">
-                <p className="text-xs text-gray-500">Median Survival</p>
-                <p className="text-base font-bold" style={{ color: group.color }}>{group.medianSurvival}</p>
+                <p className="text-xs text-gray-500">Derivation Median OS</p>
+                <p className="text-base font-bold" style={{ color: group.color }}>{group.derivationSurvival}</p>
               </div>
               <div className="rounded-xl bg-white/60 border border-gray-200/50 px-4 py-3">
-                <p className="text-xs text-gray-500">Local Control</p>
-                <p className="text-base font-bold" style={{ color: group.color }}>{group.localControl}</p>
+                <p className="text-xs text-gray-500">Internal Validation OS</p>
+                <p className="text-base font-bold" style={{ color: group.color }}>{group.validationSurvival}</p>
+              </div>
+              <div className="rounded-xl bg-white/60 border border-gray-200/50 px-4 py-3">
+                <p className="text-xs text-gray-500">External Validation OS</p>
+                <p className="text-base font-bold" style={{ color: group.color }}>{group.externalSurvival}</p>
               </div>
             </div>
+            <p className="mt-3 text-[11px] leading-relaxed text-gray-500">
+              PRISM stratifies overall survival after spine SSRS. It does not
+              estimate local control. Published medians are cohort-level
+              outcomes, not an individual survival prediction.
+            </p>
             <div className="mt-3 rounded-xl bg-white/60 border border-gray-200/50 px-4 py-3 text-xs text-gray-500">
               Thresholds: &gt;7 (Excellent) | 4&ndash;7 (Good) | 1&ndash;3 (Intermediate) | &lt;1 (Poor)
             </div>
@@ -279,45 +287,40 @@ export default function PRISMPage() {
       </section>
 
       {/* About */}
-      <section id="about" ref={about.ref as React.RefObject<HTMLElement>} className={`rounded-2xl border border-gray-200 bg-gray-50 p-8 sm:p-10 ${about.vis ? "fade-in-up fade-delay-2" : "opacity-0 translate-y-3"}`}>
+      <section id="about" className="rounded-2xl border border-gray-200 bg-gray-50 p-8 sm:p-10 fade-in-up fade-delay-2">
         <h2 className="text-xl font-semibold text-gray-900">About PRISM</h2>
         <div className="mt-4 space-y-4 text-sm leading-relaxed text-gray-600">
-          <p>PRISM (Prognostic Index for Spinal Metastases) is a prognostic scoring system for patients undergoing spinal stereotactic radiosurgery (SSRS). It combines six readily available clinical variables into a composite score, stratifying patients into four groups with distinct survival profiles.</p>
-          <p>The model was internally validated using a single-institution cohort and subsequently externally validated in an independent multi-institutional cohort, demonstrating consistent prognostic discrimination across both populations.</p>
+          <p>PRISM (Prognostic Index for Spinal Metastases) is a prognostic scoring system for patients undergoing spinal stereotactic radiosurgery (SSRS). It combines seven readily available clinical variables into a composite score, stratifying patients into four groups with distinct survival profiles.</p>
+          <p>The original MD Anderson model used KPS, not an ECOG conversion. It was internally validated in a separate single-institution cohort and externally validated in an independent contemporary cohort. The displayed median overall survival values are descriptive cohort outcomes and should not be interpreted as an individual prediction.</p>
           <h3 className="text-base font-semibold text-gray-800 pt-2">References</h3>
           <ol className="list-decimal list-inside space-y-2 text-xs text-gray-500">
-            <li>Jensen G, Tang C, Hess K, et al. Internal validation of the prognostic index for spine metastasis (PRISM). <span className="italic">Int J Radiat Oncol Biol Phys.</span> 2017;97(4):E81. <a href="https://doi.org/10.1016/j.ijrobp.2017.02.085" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">DOI</a></li>
+            <li>Tang C, Hess K, Bishop AJ, et al. Creation of a prognostic index for spine metastasis to stratify survival in patients treated with spinal stereotactic radiosurgery. <span className="italic">Int J Radiat Oncol Biol Phys.</span> 2015;93(1):118-125. <a href="https://doi.org/10.1016/j.ijrobp.2015.04.050" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">DOI</a></li>
+            <li>Jensen G, Tang C, Hess KR, et al. Internal validation of the prognostic index for spine metastasis (PRISM). <span className="italic">J Radiosurg SBRT.</span> 2017;5(1):25-34. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5675505/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Full text</a></li>
             <li>Florez MA, De B, Kowalchuk R, et al. Validation of the prognostic index for spine metastasis (PRISM). <span className="italic">Radiother Oncol.</span> 2024;201:110570. <a href="https://doi.org/10.1016/j.radonc.2024.110570" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">DOI</a></li>
           </ol>
         </div>
       </section>
 
       {/* Reference table */}
-      <section id="reference" ref={reference.ref as React.RefObject<HTMLElement>} className={`${reference.vis ? "fade-in-up fade-delay-3" : "opacity-0 translate-y-3"}`}>
+      <section id="reference" className="fade-in-up fade-delay-3">
         <details className="rounded-2xl border border-gray-200 bg-white p-6 sm:p-8 shadow-sm">
           <summary className="cursor-pointer list-none text-base font-semibold text-gray-900 flex items-center justify-between">
-            Supplemental Data &mdash; Overall Survival Cox Proportional Hazard Analysis
+            Published PRISM score components
             <svg className="h-5 w-5 text-gray-400 transition-transform details-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
           </summary>
           <div className="mt-6 overflow-x-auto">
-            <table className="w-full min-w-[700px] border-collapse text-left text-sm">
+            <table className="w-full min-w-[520px] border-collapse text-left text-sm">
               <thead>
                 <tr className="border-b border-gray-200 text-xs uppercase tracking-wider text-gray-500">
                   <th className="py-3 pr-4 font-semibold">Variable</th>
-                  <th className="py-3 pr-4 font-semibold">Univariate HR (95% CI)</th>
-                  <th className="py-3 pr-4 font-semibold">P value</th>
-                  <th className="py-3 pr-4 font-semibold">Multivariable HR (95% CI)</th>
-                  <th className="py-3 pr-4 font-semibold">P value</th>
+                  <th className="py-3 pr-4 font-semibold">Score contribution</th>
                 </tr>
               </thead>
               <tbody>
-                {coxRows.map((row, i) => (
+                {componentRows.map((row, i) => (
                   <tr key={row.variable} className={`border-b border-gray-100 ${i % 2 === 0 ? "bg-gray-50/50" : ""}`}>
                     <td className="py-3 pr-4 font-medium text-gray-800">{row.variable}</td>
-                    <td className="py-3 pr-4 text-gray-600 tabular-nums">{row.uni}</td>
-                    <td className="py-3 pr-4 text-gray-600">{row.uniP}</td>
-                    <td className="py-3 pr-4 text-gray-600 tabular-nums">{row.multi}</td>
-                    <td className="py-3 pr-4 text-gray-600">{row.multiP}</td>
+                    <td className="py-3 pr-4 text-gray-600 tabular-nums">{row.score}</td>
                   </tr>
                 ))}
               </tbody>

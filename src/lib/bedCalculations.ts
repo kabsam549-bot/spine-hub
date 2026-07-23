@@ -25,18 +25,29 @@ export function calcBEDAndEQD2(totalDose: number, fractions: number, alphaBeta: 
 
 /**
  * Convert EQD2 budget back to physical dose for a given fractionation.
- * Iterative solver (Newton's method).
+ * Exact positive solution of:
+ * EQD2 = D * (D / n + alphaBeta) / (2 + alphaBeta)
  */
-export function eqd2ToPhysicalDose(eqd2: number, fractions: number, alphaBeta: number): number {
+export function eqd2ToPhysicalDoseExact(
+  eqd2: number,
+  fractions: number,
+  alphaBeta: number,
+): number {
   if (eqd2 <= 0 || fractions < 1 || alphaBeta <= 0) return 0;
-  let D = eqd2; // initial guess
-  for (let i = 0; i < 10; i++) {
-    const d = D / fractions;
-    const current = D * (d + alphaBeta) / (2 + alphaBeta);
-    const err = current - eqd2;
-    if (Math.abs(err) < 0.001) break;
-    const deriv = (d + alphaBeta) / (2 + alphaBeta) + D / (fractions * (2 + alphaBeta));
-    D -= err / deriv;
-  }
-  return Math.max(0, Math.round(D * 10) / 10);
+  const discriminant =
+    alphaBeta ** 2 +
+    (4 * eqd2 * (2 + alphaBeta)) / fractions;
+  return (
+    (fractions / 2) *
+    (-alphaBeta + Math.sqrt(discriminant))
+  );
+}
+
+export function eqd2ToPhysicalDose(
+  eqd2: number,
+  fractions: number,
+  alphaBeta: number,
+): number {
+  const dose = eqd2ToPhysicalDoseExact(eqd2, fractions, alphaBeta);
+  return Math.max(0, Math.round(dose * 10) / 10);
 }

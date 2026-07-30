@@ -40,10 +40,12 @@ function ActionNode({ title, children, tone = "green", doseBudget = false }: { t
 }
 
 const templates = [
-  "RT-naive, radiosensitive: 18/16 Gy × 1, or 30/24 Gy × 3.",
-  "RT-naive, radioresistant: 24/16 Gy × 1, or 30/24 Gy × 3.",
-  "Prior cEBRT, radiosensitive: 27/21 Gy × 3 after cumulative OAR review.",
-  "Prior cEBRT, radioresistant: 27/24 Gy × 3 after cumulative OAR review.",
+  "Conventional EBRT: 30 Gy in 10 fractions with a 40 Gy simultaneous integrated boost (SIB), when an integrated boost approach is appropriate.",
+  "Conventional EBRT alternatives: 30 Gy in 10 fractions or 20 Gy in 5 fractions.",
+  "RT-naive, radiosensitive SSRS: 18/16 Gy × 1, or 30/24 Gy × 3.",
+  "RT-naive, radioresistant SSRS: 24/16 Gy × 1, or 30/24 Gy × 3.",
+  "Prior cEBRT, radiosensitive SSRS: 27/21 Gy × 3 after cumulative OAR review.",
+  "Prior cEBRT, radioresistant SSRS: 27/24 Gy × 3 after cumulative OAR review.",
   "Post-SBRT salvage: no automatic template. Reconstruct composite dose and individualize.",
   "Bilsky 1c or greater: assess separation strategy before SSRS if neural constraints compromise coverage.",
 ];

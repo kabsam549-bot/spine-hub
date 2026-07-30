@@ -1,186 +1,141 @@
 import Link from "next/link";
 
-const pathwaySteps = [
-  {
-    number: "01",
-    title: "Define urgency and treatment intent",
-    description:
-      "Identify neurologic compromise, mechanical pain or instability, systemic reserve, prior treatment, and whether the immediate goal is durable local control, decompression support, or symptom relief.",
-    actions: ["Review MRI and ESCC grade", "Clarify neurologic symptoms and trajectory", "Review prior RT plans and cumulative OAR exposure"],
-  },
-  {
-    number: "02",
-    title: "Complete the core assessments",
-    description:
-      "Use prognosis, stability, and NOMS assessments together. A score is an input to multidisciplinary judgment, not a treatment recommendation by itself.",
-    actions: ["Estimate prognosis with PRISM", "Assess instability with SINS", "Integrate neurologic, oncologic, mechanical, and systemic factors with NOMS"],
-  },
-  {
-    number: "03",
-    title: "Choose the local strategy",
-    description:
-      "For high-grade epidural disease or mechanical instability, discuss surgical decompression or stabilization first. For radiation-alone candidates, choose conventional RT or SBRT based on disease extent, anatomy, prior RT, and ability to meet OAR constraints.",
-    actions: ["Multidisciplinary surgical review when indicated", "Choose conventional RT versus SBRT", "Define target, image guidance, and setup requirements"],
-  },
-  {
-    number: "04",
-    title: "Select and validate the regimen",
-    description:
-      "Match fractionation to the clinical scenario, target geometry, and normal-tissue limits. For reirradiation, complete cumulative EQD2 review before finalizing a plan.",
-    actions: ["Use the regimen guide below as a planning starting point", "Run the OAR Dose Budget for prior RT", "Document rationale, constraints, and follow-up plan"],
-  },
-];
+type NodeProps = {
+  x: number;
+  y: number;
+  width: number;
+  height?: number;
+  children: React.ReactNode;
+  kind?: "decision" | "action" | "neutral";
+};
 
-const assessmentTools = [
-  {
-    href: "/prism",
-    title: "PRISM",
-    detail: "Prognostic Index for Spinal Metastases",
-    use: "Estimate survival group to support proportionality of local therapy.",
-  },
-  {
-    href: "/sins",
-    title: "SINS",
-    detail: "Spinal Instability Neoplastic Score",
-    use: "Screen for mechanical instability and need for surgical consultation.",
-  },
-  {
-    href: "/noms",
-    title: "NOMS",
-    detail: "Neurologic, Oncologic, Mechanical, Systemic framework",
-    use: "Integrate ESCC, histology, stability, and systemic fitness into a local-treatment strategy.",
-  },
-  {
-    href: "/dose-budget",
-    title: "Dose Budget",
-    detail: "Cumulative OAR EQD2 review",
-    use: "Review prior RT and remaining OAR budget before reirradiation planning.",
-  },
-];
+function Node({ x, y, width, height = 58, children, kind = "neutral" }: NodeProps) {
+  const fill = kind === "decision" ? "#fff3cd" : kind === "action" ? "#e5f3df" : "#ffffff";
+  return (
+    <g>
+      <rect x={x} y={y} width={width} height={height} rx="5" fill={fill} stroke="#1f2937" strokeWidth="2" />
+      <foreignObject x={x + 10} y={y + 6} width={width - 20} height={height - 12}>
+        <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center", color: "#111827", fontSize: "15px", fontWeight: 600, lineHeight: 1.2 }}>
+          {children}
+        </div>
+      </foreignObject>
+    </g>
+  );
+}
 
-const regimens = [
-  {
-    regimen: "8 Gy × 1",
-    category: "Conventional palliation",
-    use: "Limited-prognosis disease, symptom-focused treatment, or when a brief course is the priority.",
-  },
-  {
-    regimen: "20 Gy / 5 fx",
-    category: "Conventional palliation",
-    use: "Symptom-focused treatment when a short multi-fraction course is appropriate.",
-  },
-  {
-    regimen: "30 Gy / 10 fx",
-    category: "Conventional RT",
-    use: "When a more protracted conventional course is selected for disease control or palliation.",
-  },
-  {
-    regimen: "24 Gy / 2 fx",
-    category: "SBRT",
-    use: "Ablative-intent spine SBRT when anatomy, setup, and OAR constraints permit a two-fraction approach.",
-  },
-  {
-    regimen: "27 Gy / 3 fx",
-    category: "SBRT",
-    use: "Spine SBRT when three fractions improve normal-tissue feasibility or target coverage relative to a more condensed schedule.",
-  },
-  {
-    regimen: "30 Gy / 3 fx",
-    category: "SBRT",
-    use: "Selected SBRT cases needing a higher biologic dose while maintaining acceptable target geometry and OAR limits.",
-  },
-  {
-    regimen: "30 Gy / 5 fx",
-    category: "Hypofractionated SBRT",
-    use: "Larger, complex, or OAR-adjacent targets where five fractions improve plan feasibility.",
-  },
-  {
-    regimen: "35-40 Gy / 5 fx",
-    category: "Hypofractionated SBRT",
-    use: "Highly selected durable-control cases after multidisciplinary review, target-volume assessment, and OAR validation.",
-  },
+function Line({ points, label }: { points: string; label?: { x: number; y: number; text: string } }) {
+  return (
+    <g>
+      <polyline points={points} fill="none" stroke="#374151" strokeWidth="2" markerEnd="url(#arrow)" />
+      {label && <text x={label.x} y={label.y} fill="#374151" fontSize="13" fontWeight="600">{label.text}</text>}
+    </g>
+  );
+}
+
+const templates = [
+  "RT-naive, radiosensitive: 18/16 Gy × 1, or 30/24 Gy × 3.",
+  "RT-naive, radioresistant: 24/16 Gy × 1, or 30/24 Gy × 3.",
+  "Prior cEBRT, radiosensitive: 27/21 Gy × 3 after cumulative OAR review.",
+  "Prior cEBRT, radioresistant: 27/24 Gy × 3 after cumulative OAR review.",
+  "Post-SBRT salvage: no automatic template. Reconstruct composite dose and individualize.",
+  "Bilsky 1c or greater: assess separation strategy before SSRS if neural constraints compromise coverage.",
 ];
 
 export default function PathwayPage() {
   return (
-    <div className="flex flex-col gap-12">
-      <section className="max-w-3xl pt-2">
-        <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-blue-600">
-          <span className="h-px w-8 bg-blue-600" />Clinical Workflow
-        </div>
-        <h1 className="mt-4 text-3xl font-bold leading-tight text-gray-900 sm:text-4xl lg:text-5xl">
-          Spine treatment pathway
-        </h1>
-        <p className="mt-4 text-base leading-relaxed text-gray-500 sm:text-lg">
-          A practical sequence for moving from presentation to a treatment strategy, regimen selection, and reirradiation review.
-        </p>
+    <div className="mx-auto flex max-w-7xl flex-col gap-10">
+      <section className="max-w-4xl pt-2">
+        <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-blue-600"><span className="h-px w-8 bg-blue-600" />MD Anderson framework</div>
+        <h1 className="mt-4 text-3xl font-bold leading-tight text-gray-900 sm:text-4xl lg:text-5xl">Spine metastasis management pathway</h1>
+        <p className="mt-4 text-base leading-relaxed text-gray-600 sm:text-lg">The clinical pathway, reproduced as a decision tree from the simplified MD Anderson Spine Metastasis Management Algorithm. Yellow nodes require imaging or clinical assessment input.</p>
+        <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-relaxed text-amber-900"><strong>Scope.</strong> This is an educational decision-support pathway, not an autonomous prescription engine. Urgent cord compression, imaging review, prior-plan review, multidisciplinary input, and institutional protocols remain required.</div>
       </section>
 
-      <section>
-        <div className="mb-5 flex items-end justify-between gap-4">
-          <div>
-            <h2 className="text-xl font-bold text-gray-900">Pathway</h2>
-            <p className="mt-1 text-sm text-gray-500">Work through the clinical question before choosing a dose and fractionation.</p>
-          </div>
-          <Link href="/noms" className="hidden text-sm font-semibold text-blue-600 hover:text-blue-700 sm:block">Open NOMS framework →</Link>
+      <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+        <div className="border-b border-gray-100 px-5 py-4 sm:px-7">
+          <h2 className="text-xl font-bold text-gray-900">Management algorithm</h2>
+          <p className="mt-1 text-sm text-gray-500">Scroll horizontally on smaller screens to follow every branch.</p>
         </div>
-        <div className="grid gap-4 lg:grid-cols-4">
-          {pathwaySteps.map((step) => (
-            <article key={step.number} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-              <span className="text-xs font-bold tracking-widest text-blue-600">{step.number}</span>
-              <h3 className="mt-3 text-lg font-bold text-gray-900">{step.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-gray-600">{step.description}</p>
-              <ul className="mt-4 space-y-2 border-t border-gray-100 pt-4 text-xs leading-relaxed text-gray-500">
-                {step.actions.map((action) => <li key={action} className="flex gap-2"><span className="font-bold text-blue-600">•</span><span>{action}</span></li>)}
-              </ul>
-            </article>
-          ))}
+        <div className="overflow-x-auto bg-slate-50 p-5 sm:p-8">
+          <svg viewBox="0 0 1280 1260" role="img" aria-label="MD Anderson spine metastasis management decision tree" className="min-w-[960px] w-full rounded-xl bg-white shadow-sm" style={{ fontFamily: "Arial, sans-serif" }}>
+            <defs>
+              <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#374151" /></marker>
+            </defs>
+
+            <Node x={510} y={35} width={260}>Prognosis</Node>
+            <Line points="640,93 640,125 240,125 240,160" label={{ x: 350, y: 118, text: "LE ≤3 months" }} />
+            <Line points="640,93 640,160" label={{ x: 655, y: 128, text: "LE >3 months" }} />
+            <Node x={90} y={160} width={300} kind="action">Consider supportive care, cEBRT, or ablation</Node>
+            <Node x={510} y={160} width={260}>Neurological status</Node>
+
+            <Line points="640,218 640,245 430,245 430,285" label={{ x: 470, y: 238, text: "Intact" }} />
+            <Line points="640,218 640,245 920,245 920,285" label={{ x: 760, y: 238, text: "Not intact" }} />
+            <Node x={280} y={285} width={300} kind="decision">Mechanically stable?<sup>1</sup></Node>
+            <Node x={790} y={285} width={260} kind="action">Decompression / stabilization</Node>
+
+            <Line points="430,343 430,380 220,380 220,425" label={{ x: 335, y: 373, text: "No" }} />
+            <Line points="430,343 430,380 600,380 600,425" label={{ x: 490, y: 373, text: "Yes" }} />
+            <Node x={70} y={425} width={300} kind="action">Surgically stabilize<sup>2</sup></Node>
+            <Node x={470} y={425} width={300} kind="decision">Indication to treat<sup>3</sup></Node>
+            <Line points="370,454 470,454" />
+
+            <Line points="600,483 600,535" />
+            <Node x={470} y={535} width={300} kind="decision">Previous cEBRT?</Node>
+            <Line points="620,593 620,660" label={{ x: 635, y: 632, text: "No" }} />
+            <Line points="770,564 1110,564 1110,890 930,890" label={{ x: 860, y: 556, text: "Yes" }} />
+            <Line points="920,343 920,660" />
+            <Node x={470} y={660} width={300}>Radiosensitive?</Node>
+
+            <Line points="620,718 620,760" label={{ x: 635, y: 747, text: "Yes" }} />
+            <Line points="770,689 930,689 930,890" label={{ x: 835, y: 680, text: "No" }} />
+            <Node x={470} y={760} width={300} kind="decision">Oligometastatic or oligoprogressive?</Node>
+            <Line points="620,818 620,850 325,850 325,915" label={{ x: 405, y: 842, text: "No" }} />
+            <Line points="620,818 620,850 930,850 930,890" label={{ x: 755, y: 842, text: "Yes" }} />
+            <Node x={175} y={915} width={300} kind="action">cEBRT</Node>
+            <Node x={780} y={890} width={300} kind="decision">Epidural disease</Node>
+
+            <Line points="930,948 930,985 680,985 680,1045" label={{ x: 620, y: 978, text: "Does not touch spinal cord (Bilsky 0-1b)" }} />
+            <Line points="930,948 930,985 1090,985 1090,1045" label={{ x: 968, y: 978, text: "Touches/compresses spinal cord (Bilsky 1c-3)" }} />
+            <Node x={530} y={1045} width={300} kind="action">SSRS</Node>
+            <Node x={940} y={1045} width={300} kind="action">Separation surgery<sup>4</sup></Node>
+            <Line points="940,1074 830,1074" />
+
+            <text x="40" y="1180" fill="#4b5563" fontSize="14">1 Mechanical stability: SINS plus mechanical pain. 2 Instrumented fusion or cement augmentation. 3 Epidural disease, oligometastatic/oligoprogressive setting, or local failure following cEBRT.</text>
+            <text x="40" y="1210" fill="#4b5563" fontSize="14">4 Separation surgery may include percutaneous ablation (for example, LITT) in specific cases. cEBRT: conventional external beam RT. SSRS: spine stereotactic radiosurgery.</text>
+          </svg>
         </div>
       </section>
 
-      <section>
-        <h2 className="text-xl font-bold text-gray-900">Assessment tools</h2>
-        <p className="mt-1 text-sm text-gray-500">Use these tools at the relevant decision point, not in isolation.</p>
-        <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {assessmentTools.map((tool) => (
-            <Link key={tool.href} href={tool.href} className="group rounded-xl border border-gray-200 bg-white p-5 transition-all hover:border-blue-300 hover:shadow-md">
-              <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600">{tool.title}</h3>
-              <p className="mt-1 text-xs font-medium text-gray-400">{tool.detail}</p>
-              <p className="mt-3 text-sm leading-relaxed text-gray-600">{tool.use}</p>
-              <p className="mt-4 text-sm font-semibold text-blue-600">Open tool →</p>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <section>
-        <div className="rounded-2xl border border-blue-200 bg-blue-50/60 p-6 sm:p-8">
-          <div className="max-w-3xl">
-            <p className="text-xs font-bold uppercase tracking-widest text-blue-600">Fractionation guide</p>
-            <h2 className="mt-2 text-xl font-bold text-gray-900">Regimens and when to consider them</h2>
-            <p className="mt-2 text-sm leading-relaxed text-gray-600">Common SpineRT planning regimens. The appropriate schedule depends on treatment intent, epidural disease, stability, target extent, prior RT, setup, and achievable OAR constraints.</p>
-          </div>
-          <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            {regimens.map((item) => (
-              <article key={item.regimen} className="rounded-xl border border-white/80 bg-white/80 p-4">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h3 className="text-lg font-bold text-gray-900">{item.regimen}</h3>
-                  <span className="rounded-full bg-blue-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-blue-700">{item.category}</span>
-                </div>
-                <p className="mt-3 text-sm leading-relaxed text-gray-600">{item.use}</p>
-              </article>
+      <section className="grid gap-5 lg:grid-cols-[1fr_1fr]">
+        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <p className="text-xs font-bold uppercase tracking-widest text-blue-600">Supporting assessments</p>
+          <h2 className="mt-2 text-xl font-bold text-gray-900">Use the tools at their branch point</h2>
+          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+            {[{ href: "/prism", name: "PRISM", detail: "Prognosis" }, { href: "/sins", name: "SINS", detail: "Mechanical stability" }, { href: "/noms", name: "NOMS", detail: "Integrated local strategy" }].map((tool) => (
+              <Link key={tool.href} href={tool.href} className="rounded-xl border border-gray-200 p-4 transition hover:border-blue-300 hover:bg-blue-50">
+                <p className="font-bold text-gray-900">{tool.name}</p><p className="mt-1 text-xs leading-relaxed text-gray-500">{tool.detail}</p>
+              </Link>
             ))}
           </div>
-          <div className="mt-6 flex flex-col gap-3 border-t border-blue-200 pt-5 sm:flex-row sm:items-center sm:justify-between">
-            <p className="max-w-3xl text-xs leading-relaxed text-blue-900">For any reirradiation plan, verify the cumulative OAR budget and inspect the prior treatment plan. These entries are planning prompts, not prescriptive institutional protocols.</p>
-            <Link href="/dose-budget" className="shrink-0 rounded-lg bg-blue-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-blue-700">Open Dose Budget</Link>
-          </div>
+        </div>
+        <div className="rounded-2xl border border-blue-200 bg-blue-50 p-6">
+          <p className="text-xs font-bold uppercase tracking-widest text-blue-700">Reirradiation checkpoint</p>
+          <h2 className="mt-2 text-xl font-bold text-gray-900">Review actual prior OAR dose before a new plan</h2>
+          <p className="mt-2 text-sm leading-relaxed text-gray-600">For the prior-cEBRT branch, use actual OAR dose from the prior plan/DVH and a selected cumulative EQD2 ceiling. Do not substitute prescription dose.</p>
+          <Link href="/dose-budget" className="mt-5 inline-flex rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700">Open cumulative OAR Dose Budget</Link>
         </div>
       </section>
 
-      <section className="rounded-xl border border-amber-200 bg-amber-50 p-5 text-sm leading-relaxed text-amber-900">
-        <strong>Clinical use note.</strong> This pathway supports structured discussion and does not replace multidisciplinary review, prior-plan review, or institutional protocols.
+      <section className="rounded-2xl border border-gray-200 bg-gray-50 p-6 sm:p-8">
+        <p className="text-xs font-bold uppercase tracking-widest text-blue-600">Template guide</p>
+        <h2 className="mt-2 text-xl font-bold text-gray-900">Planning templates, after the pathway branch</h2>
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 text-sm">
+          {templates.map((template) => <p key={template} className="rounded-xl border border-gray-200 bg-white p-4 leading-relaxed text-gray-600">{template}</p>)}
+        </div>
+        <p className="mt-5 text-xs leading-relaxed text-gray-500">These are service-template starting points, not outputs of the published algorithm or replacements for plan-specific anatomy, target coverage, institutional constraints, and cumulative OAR review.</p>
       </section>
+
+      <section className="rounded-xl border border-gray-200 bg-white p-5 text-sm leading-relaxed text-gray-600"><strong className="text-gray-900">Source:</strong> Bahouth SM, Yeboa DN, Ghia AJ, et al. <em>Advances in the management of spinal metastases: what the radiologist needs to know.</em> Br J Radiol. 2023;96:20220267. <a className="font-semibold text-blue-600 hover:underline" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10997009/" target="_blank" rel="noreferrer">Read the open-access article</a>.</section>
     </div>
   );
 }

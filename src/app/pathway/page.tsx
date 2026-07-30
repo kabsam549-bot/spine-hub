@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { PathwaySideApps, type PathwaySideApp, type PrismSummary, type SinsSummary } from "../components/PathwaySideApps";
 
 type Choice = "short" | "long" | "intact" | "not-intact" | "stable" | "unstable" | "treat" | "observe" | "prior-cebrt" | "naive" | "sensitive" | "resistant" | "oligo" | "not-oligo" | "low-bilsky" | "high-bilsky";
 
@@ -59,8 +60,11 @@ export default function PathwayPage() {
   const [sensitive, setSensitive] = useState<Choice | null>(null);
   const [oligo, setOligo] = useState<Choice | null>(null);
   const [epidural, setEpidural] = useState<Choice | null>(null);
+  const [activeSideApp, setActiveSideApp] = useState<PathwaySideApp>(null);
+  const [prismSummary, setPrismSummary] = useState<PrismSummary | null>(null);
+  const [sinsSummary, setSinsSummary] = useState<SinsSummary | null>(null);
 
-  const reset = () => { setPrognosis(null); setNeurologic(null); setStability(null); setIndication(null); setPriorRt(null); setSensitive(null); setOligo(null); setEpidural(null); };
+  const reset = () => { setPrognosis(null); setNeurologic(null); setStability(null); setIndication(null); setPriorRt(null); setSensitive(null); setOligo(null); setEpidural(null); setActiveSideApp(null); setPrismSummary(null); setSinsSummary(null); };
   const resetAfterPrognosis = (value: Choice) => { setPrognosis(value); setNeurologic(null); setStability(null); setIndication(null); setPriorRt(null); setSensitive(null); setOligo(null); setEpidural(null); };
   const resetAfterNeuro = (value: Choice) => { setNeurologic(value); setStability(null); setIndication(null); setPriorRt(null); setSensitive(null); setOligo(null); setEpidural(null); };
   const resetAfterStability = (value: Choice) => { setStability(value); setIndication(null); setPriorRt(null); setSensitive(null); setOligo(null); setEpidural(null); };
@@ -82,7 +86,12 @@ export default function PathwayPage() {
 
       <section className="rounded-2xl border border-gray-200 bg-slate-50 p-5 shadow-sm sm:p-8">
         <div className="mb-7 flex items-start justify-between gap-4"><div><h2 className="text-xl font-bold text-gray-900">Click-through treatment pathway</h2><p className="mt-1 text-sm text-gray-500">Yellow cards are decisions. Green and blue cards are pathway actions.</p></div><button type="button" onClick={reset} className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-50">Reset</button></div>
-        <div className="mx-auto max-w-2xl">
+        <div className="mx-auto grid max-w-6xl gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
+          <div className="min-w-0">
+          <div className="mb-5 rounded-xl border border-blue-200 bg-blue-50 p-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-xs font-bold uppercase tracking-widest text-blue-700">Assessment side apps</p><p className="mt-1 text-sm text-blue-900">Run PRISM and SINS in a separate workspace. Saved results stay visible while you continue the pathway.</p></div><div className="flex gap-2"><button type="button" onClick={() => setActiveSideApp("prism")} className="rounded-lg border border-blue-300 bg-white px-3 py-2 text-xs font-bold text-blue-700 hover:bg-blue-100">Open PRISM</button><button type="button" onClick={() => setActiveSideApp("sins")} className="rounded-lg border border-blue-300 bg-white px-3 py-2 text-xs font-bold text-blue-700 hover:bg-blue-100">Open SINS</button></div></div>
+            {(prismSummary || sinsSummary) && <div className="mt-3 flex flex-wrap gap-2">{prismSummary && <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-blue-800">PRISM {prismSummary.score}: {prismSummary.group}, {prismSummary.prognosis}</span>}{sinsSummary && <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-blue-800">SINS {sinsSummary.score}/18: {sinsSummary.classification}</span>}</div>}
+          </div>
           <DecisionNode number="1" title="Prognosis" detail="The figure begins with life expectancy and ability to benefit from durable local therapy." value={prognosis} onChoose={resetAfterPrognosis} options={[{ value: "short", label: "Life expectancy ≤3 months" }, { value: "long", label: "Life expectancy >3 months" }]} />
           {prognosis === "short" && <><Connector label="≤3 months" /><ActionNode title="Consider supportive care, cEBRT, or ablation">Prioritize symptom relief, supportive care, and patient goals. The published pathway does not prescribe a single regimen in this branch.</ActionNode></>}
           {prognosis === "long" && <><Connector label=">3 months" /><DecisionNode number="2" title="Neurological status" detail="Assess whether the patient is neurologically intact." value={neurologic} onChoose={resetAfterNeuro} options={[{ value: "intact", label: "Intact" }, { value: "not-intact", label: "Not intact" }]} /></>}
@@ -98,6 +107,8 @@ export default function PathwayPage() {
           {needsEpidural && <><Connector label={priorRt === "prior-cebrt" ? "Prior cEBRT" : "SSRS pathway"} /><DecisionNode number="8" title="Epidural disease" detail="The key anatomic split is whether disease touches or compresses the spinal cord." value={epidural} onChoose={setEpidural} options={[{ value: "low-bilsky", label: "Does not touch cord", detail: "Bilsky 0-1b" }, { value: "high-bilsky", label: "Touches/compresses cord", detail: "Bilsky 1c-3" }]} /></>}
           {epidural === "low-bilsky" && <><Connector label="Bilsky 0-1b" /><ActionNode title="SSRS">The figure routes disease that does not touch the spinal cord to spine stereotactic radiosurgery. For prior cEBRT, review cumulative OAR exposure before planning.</ActionNode>{priorRt === "prior-cebrt" && <Link href="/dose-budget" className="mt-4 inline-flex rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-gray-700">Open cumulative OAR Dose Budget</Link>}</>}
           {epidural === "high-bilsky" && <><Connector label="Bilsky 1c-3" /><ActionNode title="Separation surgery, then SSRS">The figure routes tumor touching or compressing the spinal cord to separation surgery, followed by SSRS. In selected cases, separation may include percutaneous ablation such as LITT.</ActionNode>{priorRt === "prior-cebrt" && <Link href="/dose-budget" className="mt-4 inline-flex rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-gray-700">Open cumulative OAR Dose Budget</Link>}</>}
+          </div>
+          <PathwaySideApps activeApp={activeSideApp} onClose={() => setActiveSideApp(null)} onApplyPrism={(summary) => { setPrismSummary(summary); setActiveSideApp(null); }} onApplySins={(summary) => { setSinsSummary(summary); setActiveSideApp(null); }} />
         </div>
       </section>
 

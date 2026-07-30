@@ -123,10 +123,6 @@ export default function DoseBudgetPage() {
     setSelectedOARs((current) => current.map((item) => item.oar.name === name ? { ...item, constraintEQD2, constraintMode } : item));
   };
 
-  const enableCustomConstraint = (name: string) => {
-    setSelectedOARs((current) => current.map((item) => item.oar.name === name ? { ...item, constraintMode: "custom" } : item));
-  };
-
   const updateCourse = (name: string, index: number, field: keyof CourseInput, value: string) => {
     setSelectedOARs((current) => current.map((item) => item.oar.name === name
       ? { ...item, courses: item.courses.map((course, courseIndex) => courseIndex === index ? { ...course, [field]: value } : course) }
@@ -218,33 +214,28 @@ export default function DoseBudgetPage() {
                             {preset.label} {preset.value} Gy
                           </button>
                         ))}
-                        <button
-                          type="button"
-                          onClick={() => enableCustomConstraint(item.oar.name)}
-                          className={`rounded-full border px-2.5 py-1 text-xs font-semibold transition-colors ${
-                            item.constraintMode === "custom"
-                              ? "border-blue-600 bg-blue-600 text-white"
-                              : "border-gray-200 bg-white text-gray-600 hover:border-blue-300 hover:text-blue-700"
-                          }`}
-                        >
-                          Custom
-                        </button>
-                      </div>
-                      {item.constraintMode === "custom" && (
-                        <div className="mt-3 max-w-xs">
-                          <NumberField
-                            label="Custom cumulative ceiling"
-                            unit="Gy EQD2"
-                            value={String(item.constraintEQD2)}
-                            onChange={(value) => {
-                              const constraint = parseNumber(value);
+                        <label className={`inline-flex items-center overflow-hidden rounded-full border text-xs font-semibold transition-colors ${
+                          item.constraintMode === "custom"
+                            ? "border-blue-600 bg-blue-50 text-blue-800"
+                            : "border-gray-200 bg-white text-gray-600"
+                        }`}>
+                          <span className="pl-2.5">Custom</span>
+                          <input
+                            type="number"
+                            inputMode="decimal"
+                            min="0.1"
+                            step="0.1"
+                            aria-label={`Custom lifetime constraint for ${item.oar.name} in Gy EQD2`}
+                            value={item.constraintMode === "custom" ? String(item.constraintEQD2) : ""}
+                            onChange={(event) => {
+                              const constraint = parseNumber(event.target.value);
                               if (constraint && constraint > 0) setConstraint(item.oar.name, constraint, "custom");
                             }}
-                            step="0.1"
-                            min="0.1"
+                            className="ml-1 w-14 border-0 border-l border-inherit bg-transparent px-2 py-1 text-right text-xs font-semibold outline-none placeholder:text-gray-400"
+                            placeholder="Gy"
                           />
-                        </div>
-                      )}
+                        </label>
+                      </div>
                     </div>
                     <button type="button" onClick={() => removeOAR(item.oar.name)} className="rounded-full bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-600 hover:bg-red-50 hover:text-red-600">Remove</button>
                   </div>

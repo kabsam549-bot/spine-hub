@@ -65,7 +65,6 @@ function getBudgetTone(remaining: number, percentRemaining: number) {
 export default function DoseBudgetPage() {
   const [activeTab, setActiveTab] = useState<Tab>("budget");
   const [selectedOARs, setSelectedOARs] = useState<SelectedOAR[]>([]);
-  const [inputMode, setInputMode] = useState<"actual" | "prescription">("actual");
   const [dose, setDose] = useState("36");
   const [fractions, setFractions] = useState("4");
   const [alphaBeta, setAlphaBeta] = useState("2");
@@ -84,13 +83,13 @@ export default function DoseBudgetPage() {
           dose: totalDose,
           fractions: fx,
           timeSinceRT: interval ?? 999,
-          isDoseToPrescription: inputMode === "prescription",
+          isDoseToPrescription: false,
         }];
       });
       const oar = { ...item.oar, lifetimeToleranceEQD2: item.constraintEQD2 };
       return courses.length ? [calculateOARBudget(oar, courses)] : [];
     });
-  }, [inputMode, selectedOARs]);
+  }, [selectedOARs]);
 
   const resultByName = useMemo(
     () => new Map(results.map((result) => [result.oar.name, result])),
@@ -174,15 +173,9 @@ export default function DoseBudgetPage() {
                 <h2 className="text-lg font-bold text-gray-900">Organs at risk</h2>
                 <p className="mt-1 text-sm text-gray-500">Select an organ to enter each prior course. Budgets update in real time using cumulative EQD2, without recovery adjustments.</p>
               </div>
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="flex rounded-full border border-gray-200 bg-white p-1 text-xs font-bold">
-                  <button type="button" onClick={() => setInputMode("actual")} className={`rounded-full px-3 py-1.5 ${inputMode === "actual" ? "bg-blue-600 text-white" : "text-gray-600 hover:bg-gray-100"}`}>Actual OAR dose</button>
-                  <button type="button" onClick={() => setInputMode("prescription")} className={`rounded-full px-3 py-1.5 ${inputMode === "prescription" ? "bg-blue-600 text-white" : "text-gray-600 hover:bg-gray-100"}`}>Prescription dose</button>
-                </div>
-                {selectedOARs.length > 0 && <button type="button" onClick={() => setSelectedOARs([])} className="text-xs font-semibold text-gray-500 hover:text-red-600">Clear all</button>}
-              </div>
+              {selectedOARs.length > 0 && <button type="button" onClick={() => setSelectedOARs([])} className="self-start text-xs font-semibold text-gray-500 hover:text-red-600 sm:self-auto">Clear all</button>}
             </div>
-            <p className="mt-3 text-xs text-gray-500">{inputMode === "actual" ? "Enter the dose received by the organ from the prior plan or DVH." : "Prescription dose is used as an OAR-dose surrogate."}</p>
+            <p className="mt-3 text-xs text-gray-500">Enter the dose received by the organ from the prior plan or DVH.</p>
           </section>
 
           {hasRecentTreatment && (

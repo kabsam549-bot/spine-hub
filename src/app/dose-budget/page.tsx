@@ -21,6 +21,7 @@ interface CourseInput {
 interface SelectedOAR {
   oar: OARBudgetData;
   constraintEQD2: number;
+  constraintMode: "preset" | "custom";
   courses: CourseInput[];
 }
 
@@ -108,13 +109,22 @@ export default function DoseBudgetPage() {
 
   const addOAR = (oar: OARBudgetData) => {
     if (selectedNames.has(oar.name)) return;
-    setSelectedOARs((current) => [...current, { oar, constraintEQD2: oar.lifetimeToleranceEQD2, courses: [emptyCourse()] }]);
+    setSelectedOARs((current) => [...current, {
+      oar,
+      constraintEQD2: oar.lifetimeToleranceEQD2,
+      constraintMode: "preset",
+      courses: [emptyCourse()],
+    }]);
   };
 
   const removeOAR = (name: string) => setSelectedOARs((current) => current.filter((item) => item.oar.name !== name));
 
-  const setConstraint = (name: string, constraintEQD2: number) => {
-    setSelectedOARs((current) => current.map((item) => item.oar.name === name ? { ...item, constraintEQD2 } : item));
+  const setConstraint = (name: string, constraintEQD2: number, constraintMode: SelectedOAR["constraintMode"] = "preset") => {
+    setSelectedOARs((current) => current.map((item) => item.oar.name === name ? { ...item, constraintEQD2, constraintMode } : item));
+  };
+
+  const enableCustomConstraint = (name: string) => {
+    setSelectedOARs((current) => current.map((item) => item.oar.name === name ? { ...item, constraintMode: "custom" } : item));
   };
 
   const updateCourse = (name: string, index: number, field: keyof CourseInput, value: string) => {
@@ -192,23 +202,47 @@ export default function DoseBudgetPage() {
                     <div>
                       <h3 className="font-bold text-gray-900">{item.oar.name}</h3>
                       <p className="mt-1 text-xs text-gray-500">Tolerance {item.constraintEQD2} Gy EQD2, alpha/beta {item.oar.alphaBeta} Gy</p>
-                      {item.oar.lifetimePresets && (
-                        <div className="mt-3 flex flex-wrap items-center gap-2">
-                          <span className="text-[11px] font-bold uppercase tracking-wide text-gray-500">Lifetime constraint</span>
-                          {item.oar.lifetimePresets.map((preset) => (
-                            <button
-                              key={preset.value}
-                              type="button"
-                              onClick={() => setConstraint(item.oar.name, preset.value)}
-                              className={`rounded-full border px-2.5 py-1 text-xs font-semibold transition-colors ${
-                                item.constraintEQD2 === preset.value
-                                  ? "border-blue-600 bg-blue-600 text-white"
-                                  : "border-gray-200 bg-white text-gray-600 hover:border-blue-300 hover:text-blue-700"
-                              }`}
-                            >
-                              {preset.label} {preset.value} Gy
-                            </button>
-                          ))}
+                      <div className="mt-3 flex flex-wrap items-center gap-2">
+                        <span className="text-[11px] font-bold uppercase tracking-wide text-gray-500">Lifetime constraint</span>
+                        {item.oar.lifetimePresets?.map((preset) => (
+                          <button
+                            key={preset.value}
+                            type="button"
+                            onClick={() => setConstraint(item.oar.name, preset.value)}
+                            className={`rounded-full border px-2.5 py-1 text-xs font-semibold transition-colors ${
+                              item.constraintMode === "preset" && item.constraintEQD2 === preset.value
+                                ? "border-blue-600 bg-blue-600 text-white"
+                                : "border-gray-200 bg-white text-gray-600 hover:border-blue-300 hover:text-blue-700"
+                            }`}
+                          >
+                            {preset.label} {preset.value} Gy
+                          </button>
+                        ))}
+                        <button
+                          type="button"
+                          onClick={() => enableCustomConstraint(item.oar.name)}
+                          className={`rounded-full border px-2.5 py-1 text-xs font-semibold transition-colors ${
+                            item.constraintMode === "custom"
+                              ? "border-blue-600 bg-blue-600 text-white"
+                              : "border-gray-200 bg-white text-gray-600 hover:border-blue-300 hover:text-blue-700"
+                          }`}
+                        >
+                          Custom
+                        </button>
+                      </div>
+                      {item.constraintMode === "custom" && (
+                        <div className="mt-3 max-w-xs">
+                          <NumberField
+                            label="Custom cumulative ceiling"
+                            unit="Gy EQD2"
+                            value={String(item.constraintEQD2)}
+                            onChange={(value) => {
+                              const constraint = parseNumber(value);
+                              if (constraint && constraint > 0) setConstraint(item.oar.name, constraint, "custom");
+                            }}
+                            step="0.1"
+                            min="0.1"
+                          />
                         </div>
                       )}
                     </div>

@@ -14,6 +14,7 @@ export interface OARBudgetData {
   name: string;
   tier: ToxicityTier;
   lifetimeToleranceEQD2: number;
+  lifetimePresets?: { label: string; value: number }[];
   alphaBeta: number;
   complication: string;
   specialNote: string;
@@ -24,7 +25,11 @@ export const OAR_DATABASE: OARBudgetData[] = [
   {
     name: "Spinal Cord",
     tier: 1,
-    lifetimeToleranceEQD2: 72,
+    lifetimeToleranceEQD2: 60,
+    lifetimePresets: [
+      { label: "Conservative", value: 60 },
+      { label: "Liberal", value: 65 },
+    ],
     alphaBeta: 2,
     complication: "Myelopathy",
     specialNote:
@@ -42,7 +47,11 @@ export const OAR_DATABASE: OARBudgetData[] = [
   {
     name: "Esophagus",
     tier: 1,
-    lifetimeToleranceEQD2: 68,
+    lifetimeToleranceEQD2: 80,
+    lifetimePresets: [
+      { label: "Safe", value: 80 },
+      { label: "Borderline", value: 90 },
+    ],
     alphaBeta: 3,
     complication: "Perforation / fistula / stricture",
     specialNote:
@@ -72,6 +81,10 @@ export const OAR_DATABASE: OARBudgetData[] = [
     name: "Brachial Plexus",
     tier: 2,
     lifetimeToleranceEQD2: 75,
+    lifetimePresets: [
+      { label: "Conservative", value: 75 },
+      { label: "Liberal", value: 85 },
+    ],
     alphaBeta: 3,
     complication: "Plexopathy",
     specialNote:
@@ -80,7 +93,11 @@ export const OAR_DATABASE: OARBudgetData[] = [
   {
     name: "Sacral Plexus",
     tier: 2,
-    lifetimeToleranceEQD2: 75,
+    lifetimeToleranceEQD2: 70,
+    lifetimePresets: [
+      { label: "Conservative", value: 70 },
+      { label: "Liberal", value: 80 },
+    ],
     alphaBeta: 3,
     complication: "Neuropathy / bowel-bladder dysfunction",
     specialNote:
@@ -141,6 +158,54 @@ export const OAR_DATABASE: OARBudgetData[] = [
     complication: "Fracture",
     specialNote:
       "Risk increases with SBRT doses >40 Gy in 5fx to rib. Relevant for paravertebral extension. Rib fractures usually manageable; rarely dose-limiting.",
+  },
+  {
+    name: "Brainstem",
+    tier: 1,
+    lifetimeToleranceEQD2: 65,
+    lifetimePresets: [
+      { label: "Conservative", value: 65 },
+      { label: "Liberal", value: 70 },
+    ],
+    alphaBeta: 2,
+    complication: "Neurologic injury",
+    specialNote:
+      "Use the selected cumulative EQD2 ceiling with full review of prior dose distribution and involved brainstem substructure.",
+  },
+  {
+    name: "Rectum",
+    tier: 2,
+    lifetimeToleranceEQD2: 80,
+    lifetimePresets: [
+      { label: "Conservative", value: 80 },
+      { label: "Liberal", value: 90 },
+    ],
+    alphaBeta: 3,
+    complication: "Proctitis / bleeding / fistula",
+    specialNote:
+      "Use the selected cumulative EQD2 ceiling with attention to the relevant rectal dose-volume metric and overlap with prior treatment.",
+  },
+  {
+    name: "Larynx",
+    tier: 2,
+    lifetimeToleranceEQD2: 70,
+    lifetimePresets: [
+      { label: "Conservative", value: 70 },
+      { label: "Liberal", value: 75 },
+    ],
+    alphaBeta: 3,
+    complication: "Edema / dysfunction / chondronecrosis",
+    specialNote:
+      "Use the selected cumulative EQD2 ceiling with anatomy-specific review of prior dose distribution.",
+  },
+  {
+    name: "Carotid Artery",
+    tier: 1,
+    lifetimeToleranceEQD2: 120,
+    alphaBeta: 3,
+    complication: "Carotid blowout",
+    specialNote:
+      "Use the 120 Gy EQD2 cumulative ceiling with careful review of vessel involvement, dose distribution, and other clinical risk factors.",
   },
 ];
 

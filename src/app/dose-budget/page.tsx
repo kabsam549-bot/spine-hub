@@ -20,6 +20,7 @@ interface CourseInput {
 
 interface SelectedOAR {
   oar: OARBudgetData;
+  constraintEQD2: number;
   courses: CourseInput[];
 }
 
@@ -86,7 +87,8 @@ export default function DoseBudgetPage() {
           isDoseToPrescription: inputMode === "prescription",
         }];
       });
-      return courses.length ? [calculateOARBudget(item.oar, courses)] : [];
+      const oar = { ...item.oar, lifetimeToleranceEQD2: item.constraintEQD2 };
+      return courses.length ? [calculateOARBudget(oar, courses)] : [];
     });
   }, [inputMode, selectedOARs]);
 
@@ -107,10 +109,14 @@ export default function DoseBudgetPage() {
 
   const addOAR = (oar: OARBudgetData) => {
     if (selectedNames.has(oar.name)) return;
-    setSelectedOARs((current) => [...current, { oar, courses: [emptyCourse()] }]);
+    setSelectedOARs((current) => [...current, { oar, constraintEQD2: oar.lifetimeToleranceEQD2, courses: [emptyCourse()] }]);
   };
 
   const removeOAR = (name: string) => setSelectedOARs((current) => current.filter((item) => item.oar.name !== name));
+
+  const setConstraint = (name: string, constraintEQD2: number) => {
+    setSelectedOARs((current) => current.map((item) => item.oar.name === name ? { ...item, constraintEQD2 } : item));
+  };
 
   const updateCourse = (name: string, index: number, field: keyof CourseInput, value: string) => {
     setSelectedOARs((current) => current.map((item) => item.oar.name === name
@@ -192,7 +198,26 @@ export default function DoseBudgetPage() {
                   <div className="flex items-start justify-between gap-4 border-b border-gray-100 px-4 py-4 sm:px-5">
                     <div>
                       <h3 className="font-bold text-gray-900">{item.oar.name}</h3>
-                      <p className="mt-1 text-xs text-gray-500">Tolerance {item.oar.lifetimeToleranceEQD2} Gy EQD2, alpha/beta {item.oar.alphaBeta} Gy</p>
+                      <p className="mt-1 text-xs text-gray-500">Tolerance {item.constraintEQD2} Gy EQD2, alpha/beta {item.oar.alphaBeta} Gy</p>
+                      {item.oar.lifetimePresets && (
+                        <div className="mt-3 flex flex-wrap items-center gap-2">
+                          <span className="text-[11px] font-bold uppercase tracking-wide text-gray-500">Lifetime constraint</span>
+                          {item.oar.lifetimePresets.map((preset) => (
+                            <button
+                              key={preset.value}
+                              type="button"
+                              onClick={() => setConstraint(item.oar.name, preset.value)}
+                              className={`rounded-full border px-2.5 py-1 text-xs font-semibold transition-colors ${
+                                item.constraintEQD2 === preset.value
+                                  ? "border-blue-600 bg-blue-600 text-white"
+                                  : "border-gray-200 bg-white text-gray-600 hover:border-blue-300 hover:text-blue-700"
+                              }`}
+                            >
+                              {preset.label} {preset.value} Gy
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
                     <button type="button" onClick={() => removeOAR(item.oar.name)} className="rounded-full bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-600 hover:bg-red-50 hover:text-red-600">Remove</button>
                   </div>

@@ -59,7 +59,7 @@ export default function HomePage() {
                   Primary Tool
                 </span>
                 <span className="rounded-full bg-blue-100 px-2.5 py-0.5 text-[10px] font-semibold text-blue-700">
-                  13 OARs, 3 risk levels
+                  13 OARs, cumulative EQD2
                 </span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 group-hover:text-blue-700 transition-colors">
@@ -67,16 +67,16 @@ export default function HomePage() {
               </h2>
               <p className="text-sm leading-relaxed text-gray-600 max-w-xl">
                 Calculate remaining OAR dose budgets for reirradiation using
-                EQD2 with adjustable risk tolerance. Enter prior courses, select
-                organs at risk, and get real-time remaining dose with visual
-                breakdowns. Includes standalone BED/EQD2 converter.
+                cumulative EQD2. Enter prior courses, select organs at risk,
+                choose a lifetime constraint when applicable, and review the
+                remaining dose. Includes a standalone BED/EQD2 converter.
               </p>
               <div className="flex flex-wrap gap-3 text-xs text-gray-400 font-medium">
                 <span>EQD2 budgets</span>
-                <span>Risk tolerance toggle</span>
+                <span>Lifetime constraints</span>
                 <span>Multi-OAR support</span>
-                <span>Visual dose bar</span>
-                <span>BED/EQD2 widget</span>
+                <span>Physical-dose conversion</span>
+                <span>BED/EQD2 calculator</span>
               </div>
             </div>
             <div className="flex items-center">
@@ -84,6 +84,33 @@ export default function HomePage() {
                 Open Calculator
               </span>
             </div>
+          </div>
+        </Link>
+      </section>
+
+      {/* Pathway */}
+      <section>
+        <Link
+          href="/pathway"
+          className="group block rounded-2xl border border-gray-200 bg-white p-7 transition-all hover:border-blue-300 hover:shadow-md sm:p-8"
+        >
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="max-w-3xl">
+              <p className="text-xs font-bold uppercase tracking-widest text-blue-600">Clinical workflow</p>
+              <h2 className="mt-2 text-2xl font-bold text-gray-900 group-hover:text-blue-700">Spine treatment pathway</h2>
+              <p className="mt-2 text-sm leading-relaxed text-gray-600">
+                Move from urgency and treatment intent through PRISM, SINS, and NOMS assessment to local strategy, regimen selection, and OAR review for reirradiation.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs font-medium text-gray-500">
+                <span>Urgency and intent</span>
+                <span>Core assessments</span>
+                <span>Local strategy</span>
+                <span>Regimen guide</span>
+              </div>
+            </div>
+            <span className="shrink-0 rounded-xl border border-blue-200 bg-blue-50 px-5 py-2.5 text-sm font-semibold text-blue-700 group-hover:bg-blue-600 group-hover:text-white">
+              Open Pathway
+            </span>
           </div>
         </Link>
       </section>
